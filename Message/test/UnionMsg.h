@@ -1,10 +1,10 @@
 
 /*
- * @(#) IdipMsg.h Created by @itfriday message creator
+ * @(#) UnionMsg.h Created by @itfriday message creator
  */
 
-#ifndef IDIP_MSG_H
-#define IDIP_MSG_H
+#ifndef UNION_MSG_H
+#define UNION_MSG_H
 
 #include "field/MFieldInc.h"
 #include "StarMacro.h"
@@ -12,9 +12,9 @@
 #include "TestMsg2.h"
 
 /**
- * IDIP Message
+ * Union Message
  */
-class M_DLLIMPORT IdipMsg : public MCompositeField
+class M_DLLIMPORT UnionMsg : public MCompositeField
 {
 private:
 	MShortField m_stSelection;    // Just added for simulate union selection
@@ -27,7 +27,7 @@ public:
 	/**
 	 * 显式构造函数
 	 */
-	virtual void construct(U16 nTag = 0, const string& sName = string("IdipMsg"), MField* pParent = NULL, U16 nVer = 0);
+	virtual void construct(U16 nTag = 0, const string& sName = string("UnionMsg"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: Selection

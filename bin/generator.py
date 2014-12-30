@@ -705,11 +705,3 @@ if __name__ == '__main__':
 				unionType = UNION_GENERATE_TYPE_STRUCT;
 
 	genernateFieldFile(xmlSrcPath, macroFileName, outputDir, language, unionType);
-
-	#genernateFieldFile('.', 'StartMacro', '../../CMessage/test', 'c');
-	#genernateFieldFile('.', 'StartMacro', '../test', 'cpp');
-	#genernateFieldFile('../../PopLevelEditor/protocol', 'PopMacro', '../../CMessage/test', 'c');
-	#genernateFieldFile('../../PopLevelEditor/protocol', 'PopMacro', '../../PopLevelEditor/protocol', 'cpp');
-	#genernateFieldFile('../../FConnector/conf', 'ConfigMacro', '../../FConnector/Config', 'c');
-	#genernateFieldFile(r'E:\Xu\QT\ResConvert\project', 'ConfigMacro', r'E:\Xu\QT\ResConvert\project', 'cpp');
-

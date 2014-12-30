@@ -1,15 +1,15 @@
 
 /*
- * @(#) IdipMsg.cpp Created by @itfriday message creator
+ * @(#) UnionMsg.cpp Created by @itfriday message creator
  */
 
-#include "IdipMsg.h"
+#include "UnionMsg.h"
 #include "comm/MBaseFuncDef.h"
 
 /**
  * 显式构造函数
  */
-void IdipMsg::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
+void UnionMsg::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
 	MCompositeField::construct(nTag, sName, pParent, nVer);
 	m_stSelection.init(M_TAG(3), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0));
@@ -18,7 +18,7 @@ void IdipMsg::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer
 /**
  * @override
  */
-int IdipMsg::encode(MByteArray& baBuf, U16 nVer)
+int UnionMsg::encode(MByteArray& baBuf, U16 nVer)
 {
 	M_CHECK_FIELD_VER_RET(nVer);
 
@@ -52,7 +52,7 @@ int IdipMsg::encode(MByteArray& baBuf, U16 nVer)
 /**
  * @override
  */
-void IdipMsg::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
+void UnionMsg::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 {
 	string sSubPrefix = sPrefix + "    ";
 	M_CHECK_FIELD_VER(nVer);
@@ -75,7 +75,7 @@ void IdipMsg::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 /**
  * @override
  */
-void IdipMsg::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
+void UnionMsg::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 {
 	string sSubPrefix = sPrefix + "    ";
 	M_CHECK_FIELD_VER(nVer);
@@ -99,7 +99,7 @@ void IdipMsg::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 /**
  * @override
  */
-MField* IdipMsg::getSubField(U16 nTag, U8 chMode)
+MField* UnionMsg::getSubField(U16 nTag, U8 chMode)
 {
 	if (0xFFFF == nTag) return &m_stSelection;
 
@@ -119,7 +119,7 @@ MField* IdipMsg::getSubField(U16 nTag, U8 chMode)
 /**
  * @override
  */
-MField* IdipMsg::getSubFieldByName(const string& sName)
+MField* UnionMsg::getSubFieldByName(const string& sName)
 {
 	if (sName == "Selection") return &m_stSelection;
 	if (sName == "TestMsg")

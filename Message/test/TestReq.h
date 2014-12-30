@@ -16,8 +16,8 @@ class M_DLLIMPORT TestReq : public MCompositeField
 {
 private:
 	MULongField m_stGID; // GID
-	MIntField m_stMoney; // 金币
-	MIntField m_stGold; // 钻石
+	MIntField m_stMoney; // 游戏币
+	MIntField m_stGold; // 金币
 
 public:
 	/**
@@ -31,12 +31,12 @@ public:
 	MULongField* getGID() {return &m_stGID;}
 
 	/**
-	 * Get Function: 金币
+	 * Get Function: 游戏币
 	 */
 	MIntField* getMoney() {return &m_stMoney;}
 
 	/**
-	 * Get Function: 钻石
+	 * Get Function: 金币
 	 */
 	MIntField* getGold() {return &m_stGold;}
 

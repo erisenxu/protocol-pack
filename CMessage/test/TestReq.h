@@ -16,8 +16,8 @@ struct tagTestReq
 {
 	FIELD stField;
 	ULONGFIELD stGID; /* GID */
-	INTFIELD stMoney; /* 金币 */
-	INTFIELD stGold;  /* 钻石 */
+	INTFIELD stMoney; /* 游戏币 */
+	INTFIELD stGold;  /* 金币 */
 };
 
 typedef struct tagTestReq  TESTREQ;

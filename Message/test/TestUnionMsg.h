@@ -1,30 +1,30 @@
 
 /*
- * @(#) TestIdipMsg.h Created by @itfriday message creator
+ * @(#) TestUnionMsg.h Created by @itfriday message creator
  */
 
-#ifndef TEST_IDIP_MSG_H
-#define TEST_IDIP_MSG_H
+#ifndef TEST_UNION_MSG_H
+#define TEST_UNION_MSG_H
 
 #include "field/MFieldInc.h"
 #include "StarMacro.h"
-#include "IdipMsg.h"
+#include "UnionMsg.h"
 
 /**
  * a union object
  */
-class M_DLLIMPORT TestIdipMsg : public MCompositeField
+class M_DLLIMPORT TestUnionMsg : public MCompositeField
 {
 private:
 	MUIntField m_stSequence; // 原因
 	MUShortField m_stVersion; // 原因
-	IdipMsg m_stIdipMsg;     // Test Message2
+	UnionMsg m_stUnionMsg;   // Test Message2
 
 public:
 	/**
 	 * 显式构造函数
 	 */
-	virtual void construct(U16 nTag = 0, const string& sName = string("TestIdipMsg"), MField* pParent = NULL, U16 nVer = 0);
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestUnionMsg"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: 原因
@@ -39,7 +39,7 @@ public:
 	/**
 	 * Get Function: Test Message2
 	 */
-	IdipMsg* getIdipMsg() {return &m_stIdipMsg;}
+	UnionMsg* getUnionMsg() {return &m_stUnionMsg;}
 
 	/**
 	 * @override

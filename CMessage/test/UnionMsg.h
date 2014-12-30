@@ -1,10 +1,10 @@
 
 /*
- * @(#) IdipMsg.h Created by @itfriday message creator
+ * @(#) UnionMsg.h Created by @itfriday message creator
  */
 
-#ifndef IDIP_MSG_H
-#define IDIP_MSG_H
+#ifndef UNION_MSG_H
+#define UNION_MSG_H
 
 #include "field/FieldInc.h"
 #include "StarMacro.h"
@@ -12,9 +12,9 @@
 #include "TestMsg2.h"
 
 /**
- * IDIP Message
+ * Union Message
  */
-struct tagIdipMsg
+struct tagUnionMsg
 {
 	FIELD stField;
 	SHORTFIELD stSelection;    /* Just added for simulate union selection */
@@ -22,12 +22,12 @@ struct tagIdipMsg
 	TESTMSG2 stTestMsg2; /* Test Message2 */
 };
 
-typedef struct tagIdipMsg  IDIPMSG;
-typedef struct tagIdipMsg* LPIDIPMSG;
+typedef struct tagUnionMsg  UNIONMSG;
+typedef struct tagUnionMsg* LPUNIONMSG;
 
 /**
  * 字段信息定义
  */
-extern FIELDINFO g_stIdipMsgFieldInfo;
+extern FIELDINFO g_stUnionMsgFieldInfo;
 
 #endif

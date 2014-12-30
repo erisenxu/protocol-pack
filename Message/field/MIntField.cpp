@@ -7,26 +7,22 @@
 #include "MIntField.h"
 
 #include "comm/MBaseFuncDef.h"
-#include <stdio.h>
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-MIntField::MIntField(U16 nTag, const string& sName, MField* pParent, U16 nVer, int iValue)
-    : MField(nTag, M_FIELD_TYPE_INT, sName, pParent, nVer),
-      m_iValue(iValue)
+void MIntField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    constructField(nTag, M_FIELD_TYPE_INT, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 初始化函数
  */
-MIntField::MIntField(const MIntField& stField)
-    : MField(stField),
-      m_iValue(stField.m_iValue)
+void MIntField::init(U16 nTag, const string& sName, MField* pParent, U16 nVer, int iValue)
 {
-    //
+    construct(nTag, sName, pParent, nVer);
+    m_iValue = iValue;
 }
 
 /**

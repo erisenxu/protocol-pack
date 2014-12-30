@@ -1,13 +1,13 @@
 
 /*
- * @(#) TestReq.h Created by feimao message creator
+ * @(#) TestReq.h Created by @itfriday message creator
  */
 
 #ifndef TEST_REQ_H
 #define TEST_REQ_H
 
 #include "field/FieldInc.h"
-#include "StartMacro.h"
+#include "StarMacro.h"
 
 /**
  * 测试用消息
@@ -15,9 +15,9 @@
 struct tagTestReq
 {
 	FIELD stField;
-	ULONGFIELD stGID; // GID
-	INTFIELD stMoney; // 金币
-	INTFIELD stGold;  // 钻石
+	ULONGFIELD stGID; /* GID */
+	INTFIELD stMoney; /* 金币 */
+	INTFIELD stGold;  /* 钻石 */
 };
 
 typedef struct tagTestReq  TESTREQ;

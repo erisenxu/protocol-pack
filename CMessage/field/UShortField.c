@@ -57,7 +57,7 @@ static void ushort_field_set_value(LPFIELD pstField, const char* szValue);
  */
 FIELDINFO g_stUShortFieldInfo =
 {
-    (U8)FIELD_TYPE_SHORT,   /* type */
+    (U8)FIELD_TYPE_USHORT,  /* type */
     NULL,                   /* construct */
     NULL,                   /* init */
     ushort_field_encode,    /* encode */

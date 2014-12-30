@@ -7,6 +7,8 @@
 #ifndef MBASE_FUNC_DEF_H
 #define MBASE_FUNC_DEF_H
 
+#include <stdio.h>
+
 #define MAlloc(nSize)           malloc(nSize)
 #define MFree(szBuf, nSize)     free(szBuf)
 

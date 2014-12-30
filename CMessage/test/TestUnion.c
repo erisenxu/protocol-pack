@@ -1,6 +1,6 @@
 
 /*
- * @(#) TestUnion.cpp Created by feimao message creator
+ * @(#) TestUnion.c Created by @itfriday message creator
  */
 
 #include "TestUnion.h"
@@ -48,6 +48,10 @@ void construct_test_union_field(LPFIELD pstField)
 	construct_int_field(&((LPTESTUNION)pstField)->stMoney, M_NAME("Money"), M_TAG(2), M_PARENT(pstField), M_VERSION(1));
 	init_field_struct((LPFIELD)(&((LPTESTUNION)pstField)->stTestMsg), &g_stTestMsgFieldInfo, M_NAME("TestMsg"), M_TAG(3), M_PARENT(pstField), M_VERSION(1));
 	construct_int_field(&((LPTESTUNION)pstField)->stGold, M_NAME("Gold"), M_TAG(4), M_PARENT(pstField), M_VERSION(1));
+	construct_string_field(&((LPTESTUNION)pstField)->stDesc, M_NAME("Desc"), M_TAG(5), M_PARENT(pstField), M_VERSION(1),
+		(char*)&((LPTESTUNION)pstField)->szDesc, 1);
+	construct_array_field(&((LPTESTUNION)pstField)->stArrIntField, &g_stIntFieldInfo, M_NAME("IntField"), M_TAG(6), M_PARENT(pstField), M_VERSION(1),
+		(char*)((LPTESTUNION)pstField)->astIntField, &((LPTESTUNION)pstField)->nIntFieldNum, sizeof(((LPTESTUNION)pstField)->astIntField[0]), 4);
 }
 
 void init_test_union_field(LPFIELD pstField)
@@ -57,6 +61,10 @@ void init_test_union_field(LPFIELD pstField)
 	init_int_field(&((LPTESTUNION)pstField)->stMoney, M_NAME("Money"), M_TAG(2), M_PARENT(pstField), M_VERSION(1), M_DEFAULT(0x123456));
 	init_field((LPFIELD)(&((LPTESTUNION)pstField)->stTestMsg), &g_stTestMsgFieldInfo, M_NAME("TestMsg"), M_TAG(3), M_PARENT(pstField), M_VERSION(1));
 	init_int_field(&((LPTESTUNION)pstField)->stGold, M_NAME("Gold"), M_TAG(4), M_PARENT(pstField), M_VERSION(1), M_DEFAULT(0x789012));
+	init_string_field(&((LPTESTUNION)pstField)->stDesc, M_NAME("Desc"), M_TAG(5), M_PARENT(pstField), M_VERSION(1),
+		(char*)&((LPTESTUNION)pstField)->szDesc, 1);
+	init_array_field(&((LPTESTUNION)pstField)->stArrIntField, &g_stIntFieldInfo, M_NAME("IntField"), M_TAG(6), M_PARENT(pstField), M_VERSION(1),
+		(char*)((LPTESTUNION)pstField)->astIntField, &((LPTESTUNION)pstField)->nIntFieldNum, sizeof(((LPTESTUNION)pstField)->astIntField[0]), 4);
 }
 
 int test_union_field_encode(LPFIELD pstField, LPBYTEARRAY pstByteArray, U16 nVer)
@@ -91,6 +99,12 @@ int test_union_field_encode(LPFIELD pstField, LPBYTEARRAY pstByteArray, U16 nVer
 		break;
 	case 4:
 		CHECK_FUNC_RET(field_encode((char*)&((LPTESTUNION)pstField)->stGold, pstByteArray, nVer), iRet);
+		break;
+	case 5:
+		CHECK_FUNC_RET(field_encode((char*)&((LPTESTUNION)pstField)->stDesc, pstByteArray, nVer), iRet);
+		break;
+	case 6:
+		CHECK_FUNC_RET(field_encode((char*)&((LPTESTUNION)pstField)->stArrIntField, pstByteArray, nVer), iRet);
 		break;
 	}
 
@@ -129,6 +143,12 @@ int test_union_field_format(LPFIELD pstField, LPBYTEARRAY pstByteArray, const ch
 	case 4:
 		CHECK_FUNC_RET(field_format((char*)&((LPTESTUNION)pstField)->stGold, pstByteArray, szSubPrefix, nVer), iRet);
 		break;
+	case 5:
+		CHECK_FUNC_RET(field_format((char*)&((LPTESTUNION)pstField)->stDesc, pstByteArray, szSubPrefix, nVer), iRet);
+		break;
+	case 6:
+		CHECK_FUNC_RET(field_format((char*)&((LPTESTUNION)pstField)->stArrIntField, pstByteArray, szSubPrefix, nVer), iRet);
+		break;
 	}
 
 	return 0;
@@ -159,6 +179,12 @@ int test_union_field_to_xml(LPFIELD pstField, LPBYTEARRAY pstByteArray, const ch
 		break;
 	case 4:
 		CHECK_FUNC_RET(field_toxml((char*)&((LPTESTUNION)pstField)->stGold, pstByteArray, szSubPrefix, nVer), iRet);
+		break;
+	case 5:
+		CHECK_FUNC_RET(field_toxml((char*)&((LPTESTUNION)pstField)->stDesc, pstByteArray, szSubPrefix, nVer), iRet);
+		break;
+	case 6:
+		CHECK_FUNC_RET(field_toxml((char*)&((LPTESTUNION)pstField)->stArrIntField, pstByteArray, szSubPrefix, nVer), iRet);
 		break;
 	}
 
@@ -195,6 +221,10 @@ LPFIELD test_union_get_sub_field_by_selection(LPFIELD pstField)
 		return (LPFIELD)(&((LPTESTUNION)pstField)->stTestMsg);
 	case 4:
 		return (LPFIELD)(&((LPTESTUNION)pstField)->stGold);
+	case 5:
+		return (LPFIELD)(&((LPTESTUNION)pstField)->stDesc);
+	case 6:
+		return (LPFIELD)(&((LPTESTUNION)pstField)->stArrIntField);
 	}
 	return NULL;
 }
@@ -205,6 +235,8 @@ LPFIELD test_union_get_sub_field_by_name(LPFIELD pstField, const char* szName)
 	if (0 == strncmp(szName, "Money", sizeof("Money"))) return (LPFIELD)(&((LPTESTUNION)pstField)->stMoney);
 	if (0 == strncmp(szName, "TestMsg", sizeof("TestMsg"))) return (LPFIELD)(&((LPTESTUNION)pstField)->stTestMsg);
 	if (0 == strncmp(szName, "Gold", sizeof("Gold"))) return (LPFIELD)(&((LPTESTUNION)pstField)->stGold);
+	if (0 == strncmp(szName, "Desc", sizeof("Desc"))) return (LPFIELD)(&((LPTESTUNION)pstField)->stDesc);
+	if (0 == strncmp(szName, "IntField", sizeof("IntField"))) return (LPFIELD)(&((LPTESTUNION)pstField)->stArrIntField);
 	return NULL;
 }
 

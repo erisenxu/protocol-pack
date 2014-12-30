@@ -38,13 +38,24 @@ class M_DLLIMPORT MField
 public:
     enum MFieldDataType
     {
-        M_FIELD_TYPE_BYTE = 1,    // U8/S8，占1个字节
-        M_FIELD_TYPE_SHORT = 2,   // U16/S16，占2个字节
-        M_FIELD_TYPE_INT = 3,     // U32/S32，占4个字节
-        M_FIELD_TYPE_LONG = 4,    // U64/S64，占8个字节
-        M_FIELD_TYPE_STRING = 5,  // 字符串，特殊的TLV字段
-        M_FIELD_TYPE_TLV = 6,     // Tag-Length-Value字段，长度由length决定。其中length占位4个字节，其长度不包含自己
-        M_FIELD_TYPE_ARRAY = 7    // 数组
+        M_FIELD_TYPE_INVALID = 0, // 不合法(未初始化)的字段类型
+        M_FIELD_TYPE_BYTE = 1,    // S8，占1个字节
+        M_FIELD_TYPE_UBYTE = 2,   // U8，占1个字节
+        M_FIELD_TYPE_SHORT = 3,   // S16，占2个字节
+        M_FIELD_TYPE_USHORT = 4,  // U16，占2个字节
+        M_FIELD_TYPE_INT = 5,     // S32，占4个字节
+        M_FIELD_TYPE_UINT = 6,    // U32，占4个字节
+        M_FIELD_TYPE_LONG = 7,    // S64，占8个字节
+        M_FIELD_TYPE_ULONG = 8,   // U64，占8个字节
+        M_FIELD_TYPE_STRING = 9,  // 字符串，特殊的TLV字段
+        M_FIELD_TYPE_BYTES = 10,  // 字节数组，特殊的TLV字段
+        M_FIELD_TYPE_TLV = 11,    // Tag-Length-Value字段，长度由length决定。其中length占位4个字节，其长度不包含自己
+        M_FIELD_TYPE_ARRAY = 12   // 数组
+    };
+    enum MGetSubFieldMode
+    {
+        M_GET_SUB_FIELD_MODE_NORMAL = 0,    // 一般获取子字段
+        M_GET_SUB_FIELD_MODE_DECODE = 1     // 解码消息时，获取子字段
     };
 protected:
     U16 m_nTag;         // 字段标签，表明它是什么字段
@@ -55,26 +66,16 @@ protected:
     MField* m_pParent;  // 父字段对象
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MField(U16 nTag = 0, U8 bType = M_FIELD_TYPE_INT, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
-    
-    /**
-     * 拷贝构造函数
-     */
-    MField(const MField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MField() {}
-    
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
+
     /**
      * 设置字段标签
      * @param nTag 字段标签
      */
     void setTag(U16 nTag) {m_nTag = nTag;}
-    
+
     /**
      * 取字段标签
      * @return 返回字段标签
@@ -86,7 +87,7 @@ public:
      * @param bType 字段类型
      */
     void setType(U8 bType) {m_bType = bType;}
-    
+
     /**
      * 取字段类型
      * @return 返回字段类型
@@ -98,13 +99,13 @@ public:
      * @param sName 字段名字
      */
     void setFieldName(const string& sName) {m_sName = sName;}
-    
+
     /**
      * 取字段名字
      * @return 返回字段名字
      */
     string getFieldName() {return m_sName;}
-    
+
     /**
      * 取字段名字
      * @return 返回字段名字
@@ -122,7 +123,7 @@ public:
      * @return 返回父字段对象
      */
     MField* getParent() const {return m_pParent;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息
@@ -130,7 +131,7 @@ public:
      * @param 成功返回0，失败返回错误码
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议
@@ -155,9 +156,10 @@ public:
     /**
      * 通过字段标签查找字段
      * @param nTag 字段标签
+     * @param chMode 获取字段标签时的用途或场景，见GET_SUB_FIELD_MODE_*
      * @return 返回与字段标签对应的字段对象
      */
-    virtual MField* getSubField(U16 /*nTag*/) {return NULL;}
+    virtual MField* getSubField(U16 /*nTag*/, U8 /*chMode*/) {return NULL;}
 
     /**
      * 通过字段名查找字段
@@ -193,7 +195,7 @@ protected:
      * @return 返回读取的字节
      */
     static U8 readByte(const char* szBuf);
-    
+
     /**
      * 从消息中读取一个short，不检查长度
      * @param szBuf 消息字段
@@ -207,6 +209,11 @@ protected:
      * @return 返回读取的short
      */
     static U32 readInt(const char* szBuf);
+
+    /**
+     * 显式构造函数
+     */
+    void constructField(U16 nTag = 0, U8 bType = M_FIELD_TYPE_INT, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
 };
 
 #endif /* defined(MFIELD_H) */

@@ -1,32 +1,18 @@
 
 /*
- * @(#) TestUnion.cpp Created by feimao message creator
+ * @(#) TestUnion.cpp Created by @itfriday message creator
  */
 
 #include "TestUnion.h"
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-TestUnion::TestUnion(U16 nTag, const string& name, MField* pParent, U16 nVer)
-	: MCompositeField(nTag, name, pParent, nVer)
+void TestUnion::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-	m_pstSelection = new MShortField(M_TAG(3), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(30));
-	m_pstMoney = new MIntField(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
-	m_pstTestMsg = new TestMsg(M_TAG(3), M_NAME("TestMsg"), M_PARENT(this), M_VERSION(1));
-	m_pstGold = new MIntField(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x789012));
-}
-
-/**
- * 析构函数
- */
-TestUnion::~TestUnion()
-{
-	delete m_pstSelection;
-	delete m_pstMoney;
-	delete m_pstTestMsg;
-	delete m_pstGold;
+	MCompositeField::construct(nTag, sName, pParent, nVer);
+	m_stSelection.init(M_TAG(3), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0));
 }
 
 /**
@@ -41,17 +27,28 @@ int TestUnion::encode(MByteArray& baBuf, U16 nVer)
 
 	int iOldLen = baBuf.getLength();
 
-	m_pstSelection->encode(baBuf, nVer);
-	switch (m_pstSelection->getValue())
+	m_stSelection.encode(baBuf, nVer);
+	switch (m_stSelection.getValue())
 	{
 	case 2:
-		m_pstMoney->encode(baBuf, nVer);
+		m_stMoney.construct(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1));
+		m_stMoney.encode(baBuf, nVer);
 		break;
 	case 3:
-		m_pstTestMsg->encode(baBuf, nVer);
+		m_stTestMsg.construct(M_TAG(3), M_NAME("TestMsg"), M_PARENT(this), M_VERSION(1));
+		m_stTestMsg.encode(baBuf, nVer);
 		break;
 	case 4:
-		m_pstGold->encode(baBuf, nVer);
+		m_stGold.construct(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1));
+		m_stGold.encode(baBuf, nVer);
+		break;
+	case 5:
+		m_stDesc.construct(M_TAG(5), M_NAME("Desc"), M_PARENT(this), M_VERSION(1));
+		m_stDesc.encode(baBuf, nVer);
+		break;
+	case 6:
+		m_stIntField.construct(M_TAG(6), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
+		m_stIntField.encode(baBuf, nVer);
 		break;
 	}
 
@@ -73,17 +70,28 @@ void TestUnion::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("[").append(getFieldName()).append("]\n");
-	m_pstSelection->format(baBuf, sSubPrefix, nVer);
-	switch (m_pstSelection->getValue())
+	m_stSelection.format(baBuf, sSubPrefix, nVer);
+	switch (m_stSelection.getValue())
 	{
 	case 2:
-		m_pstMoney->format(baBuf, sSubPrefix, nVer);
+		m_stMoney.construct(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1));
+		m_stMoney.format(baBuf, sSubPrefix, nVer);
 		break;
 	case 3:
-		m_pstTestMsg->format(baBuf, sSubPrefix, nVer);
+		m_stTestMsg.construct(M_TAG(3), M_NAME("TestMsg"), M_PARENT(this), M_VERSION(1));
+		m_stTestMsg.format(baBuf, sSubPrefix, nVer);
 		break;
 	case 4:
-		m_pstGold->format(baBuf, sSubPrefix, nVer);
+		m_stGold.construct(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1));
+		m_stGold.format(baBuf, sSubPrefix, nVer);
+		break;
+	case 5:
+		m_stDesc.construct(M_TAG(5), M_NAME("Desc"), M_PARENT(this), M_VERSION(1));
+		m_stDesc.format(baBuf, sSubPrefix, nVer);
+		break;
+	case 6:
+		m_stIntField.construct(M_TAG(6), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
+		m_stIntField.format(baBuf, sSubPrefix, nVer);
 		break;
 	}
 }
@@ -97,17 +105,28 @@ void TestUnion::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("<").append(getFieldName()).append(">\n");
-	m_pstSelection->toXml(baBuf, sSubPrefix, nVer);
-	switch (m_pstSelection->getValue())
+	m_stSelection.toXml(baBuf, sSubPrefix, nVer);
+	switch (m_stSelection.getValue())
 	{
 	case 2:
-		m_pstMoney->toXml(baBuf, sSubPrefix, nVer);
+		m_stMoney.construct(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1));
+		m_stMoney.toXml(baBuf, sSubPrefix, nVer);
 		break;
 	case 3:
-		m_pstTestMsg->toXml(baBuf, sSubPrefix, nVer);
+		m_stTestMsg.construct(M_TAG(3), M_NAME("TestMsg"), M_PARENT(this), M_VERSION(1));
+		m_stTestMsg.toXml(baBuf, sSubPrefix, nVer);
 		break;
 	case 4:
-		m_pstGold->toXml(baBuf, sSubPrefix, nVer);
+		m_stGold.construct(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1));
+		m_stGold.toXml(baBuf, sSubPrefix, nVer);
+		break;
+	case 5:
+		m_stDesc.construct(M_TAG(5), M_NAME("Desc"), M_PARENT(this), M_VERSION(1));
+		m_stDesc.toXml(baBuf, sSubPrefix, nVer);
+		break;
+	case 6:
+		m_stIntField.construct(M_TAG(6), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
+		m_stIntField.toXml(baBuf, sSubPrefix, nVer);
 		break;
 	}
 	baBuf.append(sPrefix).append("</").append(getFieldName()).append(">\n");
@@ -116,18 +135,48 @@ void TestUnion::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 /**
  * @override
  */
-MField* TestUnion::getSubField(U16 nTag)
+MField* TestUnion::getSubField(U16 nTag, U8 chMode)
 {
-	if (0xFFFF == nTag) return m_pstSelection;
+	if (0xFFFF == nTag) return &m_stSelection;
 
-	switch (m_pstSelection->getValue())
+	switch (m_stSelection.getValue())
 	{
 	case 2:
-		return m_pstMoney;
+		if (M_GET_SUB_FIELD_MODE_DECODE == chMode)
+		{
+			m_stMoney.init(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
+		}
+		else
+		{
+			m_stMoney.construct(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1));
+		}
+		return &m_stMoney;
 	case 3:
-		return m_pstTestMsg;
+		m_stTestMsg.construct(M_TAG(3), M_NAME("TestMsg"), M_PARENT(this), M_VERSION(1));
+		return &m_stTestMsg;
 	case 4:
-		return m_pstGold;
+		if (M_GET_SUB_FIELD_MODE_DECODE == chMode)
+		{
+			m_stGold.init(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x789012));
+		}
+		else
+		{
+			m_stGold.construct(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1));
+		}
+		return &m_stGold;
+	case 5:
+		if (M_GET_SUB_FIELD_MODE_DECODE == chMode)
+		{
+			m_stDesc.init(M_TAG(5), M_NAME("Desc"), M_PARENT(this), M_VERSION(1), M_DEFAULT(""));
+		}
+		else
+		{
+			m_stDesc.construct(M_TAG(5), M_NAME("Desc"), M_PARENT(this), M_VERSION(1));
+		}
+		return &m_stDesc;
+	case 6:
+		m_stIntField.construct(M_TAG(6), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
+		return &m_stIntField;
 	default:
 		return NULL;
 	}
@@ -138,10 +187,32 @@ MField* TestUnion::getSubField(U16 nTag)
  */
 MField* TestUnion::getSubFieldByName(const string& sName)
 {
-	if (sName == "Selection") return m_pstSelection;
-	if (sName == "Money") return m_pstMoney;
-	if (sName == "TestMsg") return m_pstTestMsg;
-	if (sName == "Gold") return m_pstGold;
+	if (sName == "Selection") return &m_stSelection;
+	if (sName == "Money")
+	{
+		m_stMoney.construct(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1));
+		return &m_stMoney;
+	}
+	if (sName == "TestMsg")
+	{
+		m_stTestMsg.construct(M_TAG(3), M_NAME("TestMsg"), M_PARENT(this), M_VERSION(1));
+		return &m_stTestMsg;
+	}
+	if (sName == "Gold")
+	{
+		m_stGold.construct(M_TAG(4), M_NAME("Gold"), M_PARENT(this), M_VERSION(1));
+		return &m_stGold;
+	}
+	if (sName == "Desc")
+	{
+		m_stDesc.construct(M_TAG(5), M_NAME("Desc"), M_PARENT(this), M_VERSION(1));
+		return &m_stDesc;
+	}
+	if (sName == "IntField")
+	{
+		m_stIntField.construct(M_TAG(6), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
+		return &m_stIntField;
+	}
 	return NULL;
 }
 

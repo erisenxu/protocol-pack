@@ -9,23 +9,20 @@
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-MStringField::MStringField(U16 nTag, const string& sName, MField* pParent, U16 nVer, const string& sValue)
-    : MField(nTag, M_FIELD_TYPE_STRING, sName, pParent, nVer),
-      m_sValue(sValue)
+void MStringField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    constructField(nTag, M_FIELD_TYPE_STRING, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 初始化函数，会调用显式构造函数
  */
-MStringField::MStringField(const MStringField& stField)
-    : MField(stField),
-      m_sValue(stField.m_sValue)
+void MStringField::init(U16 nTag, const string& sName, MField* pParent, U16 nVer, const string& sValue)
 {
-    //
+    construct(nTag, sName, pParent, nVer);
+    m_sValue = sValue;
 }
 
 /**

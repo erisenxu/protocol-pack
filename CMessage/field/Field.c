@@ -76,14 +76,23 @@ int get_length_by_type(U8 bType, const char* szBuf, int iBufLen)
     switch (bType)
     {
         case FIELD_TYPE_BYTE:
+            return iMinLen + sizeof(S8);
+        case FIELD_TYPE_UBYTE:
             return iMinLen + sizeof(U8);
         case FIELD_TYPE_SHORT:
+            return iMinLen + sizeof(S16);
+        case FIELD_TYPE_USHORT:
             return iMinLen + sizeof(U16);
         case FIELD_TYPE_INT:
+            return iMinLen + sizeof(S32);
+        case FIELD_TYPE_UINT:
             return iMinLen + sizeof(U32);
         case FIELD_TYPE_LONG:
+            return iMinLen + sizeof(S64);
+        case FIELD_TYPE_ULONG:
             return iMinLen + sizeof(U64);
         case FIELD_TYPE_STRING:
+        case FIELD_TYPE_BYTES:
         case FIELD_TYPE_TLV:
         case FIELD_TYPE_ARRAY:
         default:

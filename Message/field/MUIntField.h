@@ -20,32 +20,27 @@ protected:
     U32 m_dwValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MUIntField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U32 dwValue = 0);
-    
-    /**
-     * 拷贝构造函数
-     */
-    MUIntField(const MUIntField& stField);
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
 
     /**
-     * 析构函数
+     * 初始化函数，会调用显式构造函数
      */
-    virtual ~MUIntField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U32 dwValue = 0);
+
     /**
      * 设置字段值
      * @param dwValue 字段的值
      */
     void setValue(U32 dwValue) {m_dwValue = dwValue;}
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
      */
     U32 getValue() const {return m_dwValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息

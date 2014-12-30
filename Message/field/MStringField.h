@@ -20,32 +20,27 @@ protected:
     string m_sValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MStringField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, const string& sValue = "");
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
     
     /**
-     * 拷贝构造函数
+     * 初始化函数，会调用显式构造函数
      */
-    MStringField(const MStringField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MStringField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, const string& sValue = "");
+
     /**
      * 设置字段值
      * @param sValue 字段的值
      */
     virtual void setValue(const string& sValue) {m_sValue = sValue;}
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
      */
     const string& getValue() const {return m_sValue;}
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
@@ -59,7 +54,7 @@ public:
      * @return 成功返回0，失败返回错误码
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议

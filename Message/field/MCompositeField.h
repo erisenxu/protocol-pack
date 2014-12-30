@@ -18,19 +18,9 @@ class M_DLLIMPORT MCompositeField : public MField
 {
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MCompositeField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
-    
-    /**
-     * 拷贝构造函数
-     */
-    MCompositeField(const MCompositeField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MCompositeField() {}
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
 
     /**
      * 字段解码

@@ -1,30 +1,20 @@
 
 /*
- * @(#) TestMsg.cpp Created by feimao message creator
+ * @(#) TestMsg.cpp Created by @itfriday message creator
  */
 
 #include "TestMsg.h"
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-TestMsg::TestMsg(U16 nTag, const string& name, MField* pParent, U16 nVer)
-	: MCompositeField(nTag, name, pParent, nVer)
+void TestMsg::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-	m_pstMoney = new MIntField(M_TAG(1), M_NAME("Money"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
-	m_pstIntField = new MArrayField<MIntField>(M_TAG(3), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
-	m_pstGold = new MIntField(M_TAG(2), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x789012));
-}
-
-/**
- * 析构函数
- */
-TestMsg::~TestMsg()
-{
-	delete m_pstMoney;
-	delete m_pstIntField;
-	delete m_pstGold;
+	MCompositeField::construct(nTag, sName, pParent, nVer);
+	m_stMoney.init(M_TAG(1), M_NAME("Money"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
+	m_stIntField.construct(M_TAG(3), M_NAME("IntField"), M_PARENT(this), M_VERSION(1));
+	m_stGold.init(M_TAG(2), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x789012));
 }
 
 /**
@@ -39,9 +29,9 @@ int TestMsg::encode(MByteArray& baBuf, U16 nVer)
 
 	int iOldLen = baBuf.getLength();
 
-	m_pstMoney->encode(baBuf, nVer);
-	m_pstIntField->encode(baBuf, nVer);
-	m_pstGold->encode(baBuf, nVer);
+	m_stMoney.encode(baBuf, nVer);
+	m_stIntField.encode(baBuf, nVer);
+	m_stGold.encode(baBuf, nVer);
 
 	// 这个必须放后面，因为append有可能那个将baBuf的getData的返回地址改变
 	U32 nAddLen = (U32)(baBuf.getLength() - iOldLen);
@@ -61,9 +51,9 @@ void TestMsg::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("[").append(getFieldName()).append("]\n");
-	m_pstMoney->format(baBuf, sSubPrefix, nVer);
-	m_pstIntField->format(baBuf, sSubPrefix, nVer);
-	m_pstGold->format(baBuf, sSubPrefix, nVer);
+	m_stMoney.format(baBuf, sSubPrefix, nVer);
+	m_stIntField.format(baBuf, sSubPrefix, nVer);
+	m_stGold.format(baBuf, sSubPrefix, nVer);
 }
 
 /**
@@ -75,25 +65,25 @@ void TestMsg::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("<").append(getFieldName()).append(">\n");
-	m_pstMoney->toXml(baBuf, sSubPrefix, nVer);
-	m_pstIntField->toXml(baBuf, sSubPrefix, nVer);
-	m_pstGold->toXml(baBuf, sSubPrefix, nVer);
+	m_stMoney.toXml(baBuf, sSubPrefix, nVer);
+	m_stIntField.toXml(baBuf, sSubPrefix, nVer);
+	m_stGold.toXml(baBuf, sSubPrefix, nVer);
 	baBuf.append(sPrefix).append("</").append(getFieldName()).append(">\n");
 }
 
 /**
  * @override
  */
-MField* TestMsg::getSubField(U16 nTag)
+MField* TestMsg::getSubField(U16 nTag, U8 /*chMode*/)
 {
 	switch (nTag)
 	{
 	case 1:
-		return m_pstMoney;
+		return &m_stMoney;
 	case 3:
-		return m_pstIntField;
+		return &m_stIntField;
 	case 2:
-		return m_pstGold;
+		return &m_stGold;
 	default:
 		return NULL;
 	}
@@ -104,9 +94,9 @@ MField* TestMsg::getSubField(U16 nTag)
  */
 MField* TestMsg::getSubFieldByName(const string& sName)
 {
-	if (sName == "Money") return m_pstMoney;
-	if (sName == "IntField") return m_pstIntField;
-	if (sName == "Gold") return m_pstGold;
+	if (sName == "Money") return &m_stMoney;
+	if (sName == "IntField") return &m_stIntField;
+	if (sName == "Gold") return &m_stGold;
 	return NULL;
 }
 

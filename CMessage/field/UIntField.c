@@ -57,7 +57,7 @@ static void uint_field_set_value(LPFIELD pstField, const char* szValue);
  */
 FIELDINFO g_stUIntFieldInfo =
 {
-    (U8)FIELD_TYPE_INT,     /* type */
+    (U8)FIELD_TYPE_UINT,    /* type */
     NULL,                   /* construct */
     NULL,                   /* init */
     uint_field_encode,      /* encode */

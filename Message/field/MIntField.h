@@ -20,32 +20,27 @@ protected:
     int m_iValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MIntField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, int iValue = 0);
-    
-    /**
-     * 拷贝构造函数
-     */
-    MIntField(const MIntField& stField);
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
 
     /**
-     * 析构函数
+     * 初始化函数
      */
-    virtual ~MIntField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, int iValue = 0);
+
     /**
      * 设置字段值
      * @param iValue 字段的值
      */
     void setValue(int iValue) {m_iValue = iValue;}
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
      */
     int getValue() const {return m_iValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息

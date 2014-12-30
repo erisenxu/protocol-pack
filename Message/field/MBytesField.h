@@ -20,32 +20,22 @@ protected:
     MByteArray m_baValue;   // 字节串
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MBytesField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
-    
-    /**
-     * 拷贝构造函数
-     */
-    MBytesField(const MBytesField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MBytesField() {}
-    
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
+
     /**
      * 设置字段值
      * @param szValue 字段的值
      */
     void setValue(const char* szValue, int iLen);
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
      */
     const MByteArray& getValue() const {return m_baValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息
@@ -53,7 +43,7 @@ public:
      * @return 成功返回0，失败返回错误码
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议

@@ -8,26 +8,21 @@
 
 #include "comm/MBaseFuncDef.h"
 
-#include <stdio.h>
-
 /**
- * 构造函数
+ * 显式构造函数
  */
-MShortField::MShortField(U16 nTag, const string& sName, MField* pParent, U16 nVer, short nValue)
-    : MField(nTag, M_FIELD_TYPE_SHORT, sName, pParent, nVer),
-      m_nValue(nValue)
+void MShortField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    constructField(nTag, M_FIELD_TYPE_SHORT, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 初始化函数，会调用显式构造函数
  */
-MShortField::MShortField(const MShortField& stField)
-    : MField(stField),
-      m_nValue(stField.m_nValue)
+void MShortField::init(U16 nTag, const string& sName, MField* pParent, U16 nVer, short nValue)
 {
-    //
+    construct(nTag, sName, pParent, nVer);
+    m_nValue = nValue;
 }
 
 /**

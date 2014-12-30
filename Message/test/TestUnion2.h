@@ -1,12 +1,13 @@
 
 /*
- * @(#) TestUnion2.h Created by feimao message creator
+ * @(#) TestUnion2.h Created by @itfriday message creator
  */
 
 #ifndef TEST_UNION2_H
 #define TEST_UNION2_H
 
 #include "field/MFieldInc.h"
+#include "StarMacro.h"
 #include "TestUnion.h"
 
 /**
@@ -15,29 +16,24 @@
 class M_DLLIMPORT TestUnion2 : public MCompositeField
 {
 private:
-	MIntField* m_pstReason; // 原因
-	TestUnion* m_pstUnion;  // Test message
+	MIntField m_stReason; // 原因
+	TestUnion m_stUnion; // Test message
 
 public:
 	/**
-	 * 构造函数
+	 * 显式构造函数
 	 */
-	TestUnion2(U16 nTag = 0, const string& name = string("TestUnion2"), MField* pParent = NULL, U16 nVer = 0);
-
-	/**
-	 * 析构函数
-	 */
-	virtual ~TestUnion2();
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestUnion2"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: 原因
 	 */
-	MIntField* getReason() {return m_pstReason;}
+	MIntField* getReason() {return &m_stReason;}
 
 	/**
 	 * Get Function: Test message
 	 */
-	TestUnion* getUnion() {return m_pstUnion;}
+	TestUnion* getUnion() {return &m_stUnion;}
 
 	/**
 	 * @override
@@ -57,7 +53,7 @@ public:
 	/**
 	 * @override
 	 */
-	virtual MField* getSubField(U16 nTag);
+	virtual MField* getSubField(U16 nTag, U8 chMode);
 
 	/**
 	 * @override

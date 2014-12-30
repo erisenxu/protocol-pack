@@ -1,6 +1,6 @@
 
 /*
- * @(#) TestMsg.cpp Created by feimao message creator
+ * @(#) TestMsg.c Created by @itfriday message creator
  */
 
 #include "TestMsg.h"

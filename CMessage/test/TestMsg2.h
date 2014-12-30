@@ -1,13 +1,13 @@
 
 /*
- * @(#) TestMsg2.h Created by feimao message creator
+ * @(#) TestMsg2.h Created by @itfriday message creator
  */
 
 #ifndef TEST_MSG2_H
 #define TEST_MSG2_H
 
 #include "field/FieldInc.h"
-#include "StartMacro.h"
+#include "StarMacro.h"
 #include "TestMsg.h"
 
 /**
@@ -17,13 +17,13 @@ struct tagTestMsg2
 {
 	FIELD stField;
 
-	U16 nTestMsgNum;          // 金币(Array Number)
-	TESTMSG astTestMsg[4];    // 金币(Array Number)
-	ARRAYFIELD stArrTestMsg;  // 金币(Array Struct Info)
+	U16 nTestMsgNum;          /* 金币(Array Number) */
+	TESTMSG astTestMsg[4];    /* 金币(Array Number) */
+	ARRAYFIELD stArrTestMsg;  /* 金币(Array Struct Info) */
 
-	U16 nIntFieldNum;         // 类型列表(Array Number)
-	INTFIELD astIntField[4];  // 类型列表(Array Number)
-	ARRAYFIELD stArrIntField; // 类型列表(Array Struct Info)
+	U16 nIntFieldNum;         /* 类型列表(Array Number) */
+	INTFIELD astIntField[4];  /* 类型列表(Array Number) */
+	ARRAYFIELD stArrIntField; /* 类型列表(Array Struct Info) */
 };
 
 typedef struct tagTestMsg2  TESTMSG2;

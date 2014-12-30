@@ -10,27 +10,23 @@
 #include "comm/MErrorCode.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-MField::MField(U16 nTag, U8 bType, const string& sName, MField* pParent, U16 nVer)
-    : m_nTag(nTag),
-      m_nVer(nVer),
-      m_bType(bType),
-      m_sName(sName),
-      m_pParent(pParent)
+void MField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
+    constructField(nTag, M_FIELD_TYPE_INVALID, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 显式构造函数
  */
-MField::MField(const MField& stField)
-    : m_nTag(stField.m_nTag),
-      m_bType(stField.m_bType),
-      m_sName(stField.m_sName),
-      m_pParent(stField.m_pParent)
+void MField::constructField(U16 nTag, U8 bType, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    m_nTag = nTag;
+    m_bType = bType;
+    m_sName = sName;
+    m_pParent = pParent;
+    m_nVer = nVer;
 }
 
 /**
@@ -61,14 +57,23 @@ int MField::getLengthByType(U8 bType, const char* szBuf, int iBufLen)
     switch (bType)
     {
         case M_FIELD_TYPE_BYTE:
-            return iMinLen + sizeof(U8);
+            return iMinLen + sizeof(S8);
         case M_FIELD_TYPE_SHORT:
-            return iMinLen + sizeof(U16);
+            return iMinLen + sizeof(S16);
         case M_FIELD_TYPE_INT:
-            return iMinLen + sizeof(U32);
+            return iMinLen + sizeof(S32);
         case M_FIELD_TYPE_LONG:
+            return iMinLen + sizeof(S64);
+        case M_FIELD_TYPE_UBYTE:
+            return iMinLen + sizeof(U8);
+        case M_FIELD_TYPE_USHORT:
+            return iMinLen + sizeof(U16);
+        case M_FIELD_TYPE_UINT:
+            return iMinLen + sizeof(U32);
+        case M_FIELD_TYPE_ULONG:
             return iMinLen + sizeof(U64);
         case M_FIELD_TYPE_STRING:
+        case M_FIELD_TYPE_BYTES:
         case M_FIELD_TYPE_TLV:
         case M_FIELD_TYPE_ARRAY:
         default:

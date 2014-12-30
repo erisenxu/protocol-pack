@@ -1,9 +1,9 @@
 /*
- * @(#) StartMacro.h Created by feimao message creator
+ * @(#) StarMacro.h Created by feimao message creator
  */
 
-#ifndef START_MACRO
-#define START_MACRO
+#ifndef STAR_MACRO
+#define STAR_MACRO
 
 #define MAX_TEST_INFO_NUM                                       20	/* 最大请求信息数量 */
 #define MAX_TYPE_NUM                                            30	/* 最大类型数量 */
@@ -22,6 +22,8 @@ enum tagMSG_TYPE_
 {
 	MSG_TEST_REQ = 1,                                              /* 测试用消息类型1 */
 	MSG_TEST_REQ2 = 2,                                             /* 测试用消息类型2 */
+	TEST_MSG = 3,                                                  /*  */
+	TEST_MSG_2 = 4,                                                /*  */
 };
 
 /**

@@ -8,26 +8,21 @@
 
 #include "comm/MBaseFuncDef.h"
 
-#include <stdio.h>
-
 /**
- * 构造函数
+ * 显式构造函数
  */
-MUByteField::MUByteField(U16 nTag, const string& sName, MField* pParent, U16 nVer, U8 bValue)
-    : MField(nTag, M_FIELD_TYPE_BYTE, sName, pParent, nVer),
-      m_bValue(bValue)
+void MUByteField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    constructField(nTag, M_FIELD_TYPE_UBYTE, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 初始化函数，会调用显式构造函数
  */
-MUByteField::MUByteField(const MUByteField& stField)
-    : MField(stField),
-      m_bValue(stField.m_bValue)
+void MUByteField::init(U16 nTag, const string& sName, MField* pParent, U16 nVer, U8 bValue)
 {
-    //
+    construct(nTag, sName, pParent, nVer);
+    m_bValue = bValue;
 }
 
 /**

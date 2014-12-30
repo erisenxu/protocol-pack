@@ -20,20 +20,15 @@ protected:
     char m_chValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MByteField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, char chValue = 0);
-    
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
+
     /**
-     * 拷贝构造函数
+     * 初始化函数
      */
-    MByteField(const MByteField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MByteField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, char chValue = 0);
+
     /**
      * 设置字段值
      * @param bValue 字段的值
@@ -45,7 +40,7 @@ public:
      * @return 返回字段的值
      */
     char getValue() const {return m_chValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息
@@ -53,7 +48,7 @@ public:
      * @return 成功返回0，失败返回错误码
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议

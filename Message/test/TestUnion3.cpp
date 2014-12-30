@@ -1,30 +1,20 @@
 
 /*
- * @(#) TestUnion3.cpp Created by feimao message creator
+ * @(#) TestUnion3.cpp Created by @itfriday message creator
  */
 
 #include "TestUnion3.h"
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-TestUnion3::TestUnion3(U16 nTag, const string& name, MField* pParent, U16 nVer)
-	: MCompositeField(nTag, name, pParent, nVer)
+void TestUnion3::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-	m_pstReason = new MIntField(M_TAG(1), M_NAME("Reason"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
-	m_pstUnion2 = new TestUnion2(M_TAG(2), M_NAME("Union2"), M_PARENT(this), M_VERSION(1));
-	m_pstReason2 = new MIntField(M_TAG(3), M_NAME("Reason2"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
-}
-
-/**
- * 析构函数
- */
-TestUnion3::~TestUnion3()
-{
-	delete m_pstReason;
-	delete m_pstUnion2;
-	delete m_pstReason2;
+	MCompositeField::construct(nTag, sName, pParent, nVer);
+	m_stReason.init(M_TAG(1), M_NAME("Reason"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
+	m_stUnion2.construct(M_TAG(2), M_NAME("Union2"), M_PARENT(this), M_VERSION(1));
+	m_stReason2.init(M_TAG(3), M_NAME("Reason2"), M_PARENT(this), M_VERSION(1), M_DEFAULT(0x123456));
 }
 
 /**
@@ -39,9 +29,9 @@ int TestUnion3::encode(MByteArray& baBuf, U16 nVer)
 
 	int iOldLen = baBuf.getLength();
 
-	m_pstReason->encode(baBuf, nVer);
-	m_pstUnion2->encode(baBuf, nVer);
-	m_pstReason2->encode(baBuf, nVer);
+	m_stReason.encode(baBuf, nVer);
+	m_stUnion2.encode(baBuf, nVer);
+	m_stReason2.encode(baBuf, nVer);
 
 	// 这个必须放后面，因为append有可能那个将baBuf的getData的返回地址改变
 	U32 nAddLen = (U32)(baBuf.getLength() - iOldLen);
@@ -61,9 +51,9 @@ void TestUnion3::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("[").append(getFieldName()).append("]\n");
-	m_pstReason->format(baBuf, sSubPrefix, nVer);
-	m_pstUnion2->format(baBuf, sSubPrefix, nVer);
-	m_pstReason2->format(baBuf, sSubPrefix, nVer);
+	m_stReason.format(baBuf, sSubPrefix, nVer);
+	m_stUnion2.format(baBuf, sSubPrefix, nVer);
+	m_stReason2.format(baBuf, sSubPrefix, nVer);
 }
 
 /**
@@ -75,25 +65,25 @@ void TestUnion3::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("<").append(getFieldName()).append(">\n");
-	m_pstReason->toXml(baBuf, sSubPrefix, nVer);
-	m_pstUnion2->toXml(baBuf, sSubPrefix, nVer);
-	m_pstReason2->toXml(baBuf, sSubPrefix, nVer);
+	m_stReason.toXml(baBuf, sSubPrefix, nVer);
+	m_stUnion2.toXml(baBuf, sSubPrefix, nVer);
+	m_stReason2.toXml(baBuf, sSubPrefix, nVer);
 	baBuf.append(sPrefix).append("</").append(getFieldName()).append(">\n");
 }
 
 /**
  * @override
  */
-MField* TestUnion3::getSubField(U16 nTag)
+MField* TestUnion3::getSubField(U16 nTag, U8 /*chMode*/)
 {
 	switch (nTag)
 	{
 	case 1:
-		return m_pstReason;
+		return &m_stReason;
 	case 2:
-		return m_pstUnion2;
+		return &m_stUnion2;
 	case 3:
-		return m_pstReason2;
+		return &m_stReason2;
 	default:
 		return NULL;
 	}
@@ -104,9 +94,9 @@ MField* TestUnion3::getSubField(U16 nTag)
  */
 MField* TestUnion3::getSubFieldByName(const string& sName)
 {
-	if (sName == "Reason") return m_pstReason;
-	if (sName == "Union2") return m_pstUnion2;
-	if (sName == "Reason2") return m_pstReason2;
+	if (sName == "Reason") return &m_stReason;
+	if (sName == "Union2") return &m_stUnion2;
+	if (sName == "Reason2") return &m_stReason2;
 	return NULL;
 }
 

@@ -58,7 +58,7 @@ static void ulong_field_set_value(LPFIELD pstField, const char* szValue);
  */
 FIELDINFO g_stULongFieldInfo =
 {
-    (U8)FIELD_TYPE_LONG,    /* type */
+    (U8)FIELD_TYPE_ULONG,   /* type */
     NULL,                   /* construct */
     NULL,                   /* init */
     ulong_field_encode,     /* encode */

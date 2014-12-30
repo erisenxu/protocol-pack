@@ -1,12 +1,13 @@
 
 /*
- * @(#) TestReq2.h Created by feimao message creator
+ * @(#) TestReq2.h Created by @itfriday message creator
  */
 
 #ifndef TEST_REQ2_H
 #define TEST_REQ2_H
 
 #include "field/MFieldInc.h"
+#include "StarMacro.h"
 #include "TestReq.h"
 
 /**
@@ -15,41 +16,36 @@
 class M_DLLIMPORT TestReq2 : public MCompositeField
 {
 private:
-	TestReq* m_pstTestReq;               // 请求信息1
-	MArrayField<TestReq>* m_pstReqInfo;  // 请求信息
-	MArrayField<MUIntField>* m_pstTypes; // 类型列表
-	MStringField* m_pstGID;              // GID
+	TestReq m_stTestReq;                                // 请求信息1
+	MArrayField<TestReq, MAX_TEST_INFO_NUM> m_stReqInfo; // 请求信息
+	MArrayField<MUIntField, MAX_TYPE_NUM> m_stTypes;    // 类型列表
+	MStringField m_stGID;                               // GID
 
 public:
 	/**
-	 * 构造函数
+	 * 显式构造函数
 	 */
-	TestReq2(U16 nTag = 0, const string& name = string("TestReq2"), MField* pParent = NULL, U16 nVer = 0);
-
-	/**
-	 * 析构函数
-	 */
-	virtual ~TestReq2();
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestReq2"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: 请求信息1
 	 */
-	TestReq* getTestReq() {return m_pstTestReq;}
+	TestReq* getTestReq() {return &m_stTestReq;}
 
 	/**
 	 * Get Function: 请求信息
 	 */
-	MArrayField<TestReq>* getReqInfo() {return m_pstReqInfo;}
+	MArrayField<TestReq, MAX_TEST_INFO_NUM>* getReqInfo() {return &m_stReqInfo;}
 
 	/**
 	 * Get Function: 类型列表
 	 */
-	MArrayField<MUIntField>* getTypes() {return m_pstTypes;}
+	MArrayField<MUIntField, MAX_TYPE_NUM>* getTypes() {return &m_stTypes;}
 
 	/**
 	 * Get Function: GID
 	 */
-	MStringField* getGID() {return m_pstGID;}
+	MStringField* getGID() {return &m_stGID;}
 
 	/**
 	 * @override
@@ -69,7 +65,7 @@ public:
 	/**
 	 * @override
 	 */
-	virtual MField* getSubField(U16 nTag);
+	virtual MField* getSubField(U16 nTag, U8 chMode);
 
 	/**
 	 * @override

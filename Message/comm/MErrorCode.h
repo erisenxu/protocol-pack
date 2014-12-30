@@ -13,5 +13,6 @@
 /* 编解码错误码-1001~-1100 */
 #define M_ERROR_ENCODE_BUFSIZE_SHORT      -1001     // 消息编码时缓存太小
 #define M_ERROR_DECODE_BUFSIZE_SHORT      -1002     // 消息解码时缓存太小
+#define M_ERROR_DECODE_ARRAY_LONG         -1003     // 解码数组时，数组字段太长
 
 #endif

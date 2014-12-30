@@ -58,7 +58,7 @@ static void ubyte_field_set_value(LPFIELD pstField, const char* szValue);
  */
 FIELDINFO g_stUByteFieldInfo =
 {
-    (U8)FIELD_TYPE_BYTE,    /* type */
+    (U8)FIELD_TYPE_UBYTE,   /* type */
     NULL,                   /* construct */
     NULL,                   /* init */
     ubyte_field_encode,     /* encode */

@@ -1,30 +1,20 @@
 
 /*
- * @(#) TestReq.cpp Created by feimao message creator
+ * @(#) TestReq.cpp Created by @itfriday message creator
  */
 
 #include "TestReq.h"
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-TestReq::TestReq(U16 nTag, const string& name, MField* pParent, U16 nVer)
-	: MCompositeField(nTag, name, pParent, nVer)
+void TestReq::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-	m_pstGID = new MULongField(M_TAG(1), M_NAME("GID"), M_PARENT(this), M_VERSION(1), M_DEFAULT(10));
-	m_pstMoney = new MIntField(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1), M_DEFAULT(20));
-	m_pstGold = new MIntField(M_TAG(3), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(30));
-}
-
-/**
- * 析构函数
- */
-TestReq::~TestReq()
-{
-	delete m_pstGID;
-	delete m_pstMoney;
-	delete m_pstGold;
+	MCompositeField::construct(nTag, sName, pParent, nVer);
+	m_stGID.init(M_TAG(1), M_NAME("GID"), M_PARENT(this), M_VERSION(1), M_DEFAULT(10));
+	m_stMoney.init(M_TAG(2), M_NAME("Money"), M_PARENT(this), M_VERSION(1), M_DEFAULT(20));
+	m_stGold.init(M_TAG(3), M_NAME("Gold"), M_PARENT(this), M_VERSION(1), M_DEFAULT(30));
 }
 
 /**
@@ -39,9 +29,9 @@ int TestReq::encode(MByteArray& baBuf, U16 nVer)
 
 	int iOldLen = baBuf.getLength();
 
-	m_pstGID->encode(baBuf, nVer);
-	m_pstMoney->encode(baBuf, nVer);
-	m_pstGold->encode(baBuf, nVer);
+	m_stGID.encode(baBuf, nVer);
+	m_stMoney.encode(baBuf, nVer);
+	m_stGold.encode(baBuf, nVer);
 
 	// 这个必须放后面，因为append有可能那个将baBuf的getData的返回地址改变
 	U32 nAddLen = (U32)(baBuf.getLength() - iOldLen);
@@ -61,9 +51,9 @@ void TestReq::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("[").append(getFieldName()).append("]\n");
-	m_pstGID->format(baBuf, sSubPrefix, nVer);
-	m_pstMoney->format(baBuf, sSubPrefix, nVer);
-	m_pstGold->format(baBuf, sSubPrefix, nVer);
+	m_stGID.format(baBuf, sSubPrefix, nVer);
+	m_stMoney.format(baBuf, sSubPrefix, nVer);
+	m_stGold.format(baBuf, sSubPrefix, nVer);
 }
 
 /**
@@ -75,25 +65,25 @@ void TestReq::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("<").append(getFieldName()).append(">\n");
-	m_pstGID->toXml(baBuf, sSubPrefix, nVer);
-	m_pstMoney->toXml(baBuf, sSubPrefix, nVer);
-	m_pstGold->toXml(baBuf, sSubPrefix, nVer);
+	m_stGID.toXml(baBuf, sSubPrefix, nVer);
+	m_stMoney.toXml(baBuf, sSubPrefix, nVer);
+	m_stGold.toXml(baBuf, sSubPrefix, nVer);
 	baBuf.append(sPrefix).append("</").append(getFieldName()).append(">\n");
 }
 
 /**
  * @override
  */
-MField* TestReq::getSubField(U16 nTag)
+MField* TestReq::getSubField(U16 nTag, U8 /*chMode*/)
 {
 	switch (nTag)
 	{
 	case 1:
-		return m_pstGID;
+		return &m_stGID;
 	case 2:
-		return m_pstMoney;
+		return &m_stMoney;
 	case 3:
-		return m_pstGold;
+		return &m_stGold;
 	default:
 		return NULL;
 	}
@@ -104,9 +94,9 @@ MField* TestReq::getSubField(U16 nTag)
  */
 MField* TestReq::getSubFieldByName(const string& sName)
 {
-	if (sName == "GID") return m_pstGID;
-	if (sName == "Money") return m_pstMoney;
-	if (sName == "Gold") return m_pstGold;
+	if (sName == "GID") return &m_stGID;
+	if (sName == "Money") return &m_stMoney;
+	if (sName == "Gold") return &m_stGold;
 	return NULL;
 }
 

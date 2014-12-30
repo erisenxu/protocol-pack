@@ -9,26 +9,21 @@
 #include "comm/MBaseFuncDef.h"
 #include "comm/MErrorCode.h"
 
-#include <stdio.h>
-
 /**
- * 构造函数
+ * 显式构造函数
  */
-MByteField::MByteField(U16 nTag, const string& sName, MField* pParent, U16 nVer, char chValue)
-    : MField(nTag, M_FIELD_TYPE_BYTE, sName, pParent, nVer),
-      m_chValue(chValue)
+void MByteField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    constructField(nTag, M_FIELD_TYPE_BYTE, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 初始化函数
  */
-MByteField::MByteField(const MByteField& stField)
-    : MField(stField),
-     m_chValue(stField.m_chValue)
+void MByteField::init(U16 nTag, const string& sName, MField* pParent, U16 nVer, char chValue)
 {
-    //
+    construct(nTag, sName, pParent, nVer);
+    m_chValue = chValue;
 }
 
 /**

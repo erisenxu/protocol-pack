@@ -1,13 +1,13 @@
 
 /*
- * @(#) TestUnion3.h Created by feimao message creator
+ * @(#) TestUnion3.h Created by @itfriday message creator
  */
 
 #ifndef TEST_UNION3_H
 #define TEST_UNION3_H
 
 #include "field/FieldInc.h"
-#include "StartMacro.h"
+#include "StarMacro.h"
 #include "TestUnion2.h"
 
 /**
@@ -16,9 +16,9 @@
 struct tagTestUnion3
 {
 	FIELD stField;
-	INTFIELD stReason;   // 原因
-	TESTUNION2 stUnion2; // Test message
-	INTFIELD stReason2;  // 原因
+	INTFIELD stReason;   /* 原因 */
+	TESTUNION2 stUnion2; /* Test message */
+	INTFIELD stReason2;  /* 原因 */
 };
 
 typedef struct tagTestUnion3  TESTUNION3;

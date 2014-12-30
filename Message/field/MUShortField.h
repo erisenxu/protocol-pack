@@ -20,32 +20,27 @@ protected:
     U16 m_nValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MUShortField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U16 nValue = 0);
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
     
     /**
-     * 拷贝构造函数
+     * 初始化函数，会调用显式构造函数
      */
-    MUShortField(const MUShortField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MUShortField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U16 nValue = 0);
+
     /**
      * 设置字段值
      * @param nValue 字段的值
      */
     void setValue(U16 nValue) {m_nValue = nValue;}
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
      */
     U16 getValue() const {return m_nValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息
@@ -53,7 +48,7 @@ public:
      * @return 成功返回0，失败返回错误码
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议

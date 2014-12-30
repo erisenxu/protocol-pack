@@ -1,6 +1,6 @@
 
 /*
- * @(#) TestReq.cpp Created by feimao message creator
+ * @(#) TestReq.c Created by @itfriday message creator
  */
 
 #include "TestReq.h"

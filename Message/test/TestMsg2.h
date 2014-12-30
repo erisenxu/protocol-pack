@@ -1,12 +1,13 @@
 
 /*
- * @(#) TestMsg2.h Created by feimao message creator
+ * @(#) TestMsg2.h Created by @itfriday message creator
  */
 
 #ifndef TEST_MSG2_H
 #define TEST_MSG2_H
 
 #include "field/MFieldInc.h"
+#include "StarMacro.h"
 #include "TestMsg.h"
 
 /**
@@ -15,29 +16,24 @@
 class M_DLLIMPORT TestMsg2 : public MCompositeField
 {
 private:
-	MArrayField<TestMsg>* m_pstTestMsg;    // 金币
-	MArrayField<MIntField>* m_pstIntField; // 类型列表
+	MArrayField<TestMsg, 4> m_stTestMsg;   // 金币
+	MArrayField<MIntField, 4> m_stIntField; // 类型列表
 
 public:
 	/**
-	 * 构造函数
+	 * 显式构造函数
 	 */
-	TestMsg2(U16 nTag = 0, const string& name = string("TestMsg2"), MField* pParent = NULL, U16 nVer = 0);
-
-	/**
-	 * 析构函数
-	 */
-	virtual ~TestMsg2();
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestMsg2"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: 金币
 	 */
-	MArrayField<TestMsg>* getTestMsg() {return m_pstTestMsg;}
+	MArrayField<TestMsg, 4>* getTestMsg() {return &m_stTestMsg;}
 
 	/**
 	 * Get Function: 类型列表
 	 */
-	MArrayField<MIntField>* getIntField() {return m_pstIntField;}
+	MArrayField<MIntField, 4>* getIntField() {return &m_stIntField;}
 
 	/**
 	 * @override
@@ -57,7 +53,7 @@ public:
 	/**
 	 * @override
 	 */
-	virtual MField* getSubField(U16 nTag);
+	virtual MField* getSubField(U16 nTag, U8 chMode);
 
 	/**
 	 * @override

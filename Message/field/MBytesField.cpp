@@ -9,22 +9,11 @@
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-MBytesField::MBytesField(U16 nTag, const string& sName, MField* pParent, U16 nVer)
-    : MField(nTag, M_FIELD_TYPE_STRING, sName, pParent, nVer)
+void MBytesField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
-}
-
-/**
- * 拷贝构造函数
- */
-MBytesField::MBytesField(const MBytesField& stField)
-    : MField(stField),
-      m_baValue(stField.m_baValue)
-{
-    //
+    constructField(nTag, M_FIELD_TYPE_BYTES, sName, pParent, nVer);
 }
 
 /**

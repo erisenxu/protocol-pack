@@ -9,6 +9,7 @@
 
 #include "MField.h"
 #include "comm/MBaseFuncDef.h"
+#include "comm/MErrorCode.h"
 
 #include <vector>
 
@@ -18,100 +19,70 @@
  * @author 徐勇(Erisen Xu)
  */
 
-template <typename T> class MArrayField : public MField
+template <typename T, size_t MAX_ARRAY_NUM> class MArrayField : public MField
 {
 protected:
-    vector<MField*> m_oSubFields;
+    U16 m_nArrNum;
+    T m_oSubFields[MAX_ARRAY_NUM];
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MArrayField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0) : MField(nTag, M_FIELD_TYPE_ARRAY, sName, pParent, nVer) {}
-    
-    /**
-     * 拷贝构造函数
-     */
-    MArrayField(const MArrayField& stField) : MField(stField) {
-        for (auto mf : stField.m_oSubFields) {
-            m_oSubFields.push_back(new T(*mf));
-        }
-    }
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MArrayField() {
-        removeAllFields();
-    }
-    
-    /**
-     * 添加子字段
-     */
-    void addSubField(MField* pstField) {
-        if (NULL == pstField) return;
-
-        for (auto mf : m_oSubFields) {
-            if (pstField == mf) return;
-        }
-
-        m_oSubFields.push_back(pstField);
-        pstField->setFieldName(getFieldName());
-        pstField->setParent(this);
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0) {
+        constructField(nTag, M_FIELD_TYPE_ARRAY, sName, pParent, nVer);
+        m_nArrNum = 0;
     }
 
     /**
      * 新增一个子字段
      */
     virtual MField* appendSubField() {
-        MField* pstField = new T(m_oSubFields.size() + 1, getFieldName());
 
-        m_oSubFields.push_back(pstField);
-        pstField->setParent(this);
+        MField* pstField;
+
+        if (m_nArrNum >= MAX_ARRAY_NUM) return NULL;
+        
+        pstField = &m_oSubFields[m_nArrNum];
+        m_nArrNum++;
+
+        pstField->construct(m_nArrNum, getFieldName(), this, m_nVer);
 
         return pstField;
     }
-    
-    /**
-     * 删除子字段
-     */
-    void removeSubField(MField* pstField) {
-        std::vector<MField*>::iterator iter;
 
-        for (iter = m_oSubFields.begin(); iter != m_oSubFields.end(); iter++) {
-            if (*iter == pstField) {
-                //delete *iter;
-                m_oSubFields.erase(iter);
-                break;
-            }
-        }
-    }
-    
     /**
      * 删除所有字段
      */
     void removeAllFields() {
-        for (auto mf : m_oSubFields) {
-            delete mf;
-        }
-        m_oSubFields.clear();
+        m_nArrNum = 0;
+    }
+
+    /**
+     * 取数组字段数量
+     * @return 返回数组字段数量
+     */
+    U16 getFieldNumber() const {
+        return m_nArrNum;
     }
 
     /**
      * 获得所有子字段列表
      * @return 返回子字段列表
      */
-    const vector<MField*>& getSubFields() {
-        return m_oSubFields;
+    T* getSubFieldByIndex(U16 nIndex) {
+        if (nIndex >= m_nArrNum) return NULL;
+        return &m_oSubFields[nIndex];
     }
 
     /**
      * 通过字段标签查找字段
      * @param nTag 字段标签
+     * @param chMode 获取字段标签时的用途或场景，见GET_SUB_FIELD_MODE_*
      * @return 返回与字段标签对应的字段对象
      */
-    virtual MField* getSubField(U16 nTag) {
-        for (auto mf : m_oSubFields) {
-            if (mf->getTag() == nTag) return mf;
+    virtual MField* getSubField(U16 nTag, U8 /*chMode*/) {
+        for (U16 i = 0; i < m_nArrNum; i++) {
+            if (m_oSubFields[i].getTag() == nTag) return &m_oSubFields[i];
         }
         return NULL;
     }
@@ -137,11 +108,11 @@ public:
 
         // 对数组进行编码
         // 数组数量
-        baBuf.append((U16)m_oSubFields.size());
+        baBuf.append((U16)m_nArrNum);
 
         // 数组子字段
-        for (auto mf : m_oSubFields) {
-            mf->encode(baBuf, nVer);
+        for (U16 i = 0; i < m_nArrNum; i++) {
+            m_oSubFields[i].encode(baBuf, nVer);
         }
 
         // 修正数组长度
@@ -153,7 +124,7 @@ public:
 
         return 0;
     }
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议
@@ -164,28 +135,28 @@ public:
 
         int iHdrLen = sizeof(m_nTag) + sizeof(m_bType) + sizeof(U32);
         const char* pszArray = szBuf + iHdrLen;
-        U16 nArrayNum = 0;
         int iLeftLen = iBufLen - iHdrLen;
         int iRet = -1;
-        MField* pstField = NULL;
         int iMsgLen = 0;
+        MField* pstSubField;
 
         removeAllFields();
 
         // 数组长度
-        M_CHAR_TO_U16(nArrayNum, pszArray);
-        iLeftLen -= sizeof(nArrayNum);
+        M_CHAR_TO_U16(m_nArrNum, pszArray);
+        iLeftLen -= sizeof(m_nArrNum);
+
+        // 数组长度超过了最大值的处理
+        if (m_nArrNum > MAX_ARRAY_NUM) return M_ERROR_DECODE_ARRAY_LONG;
 
         // 解析子字段
-        for (U16 i = 1; i <= nArrayNum; i++) {
-            pstField = new T(i, getFieldName());
+        for (U16 i = 0; i < m_nArrNum; i++) {
+            pstSubField = &m_oSubFields[i];
+            pstSubField->construct(i, getFieldName(), this, m_nVer);
 
-            m_oSubFields.push_back(pstField);
-            pstField->setParent(this);
+            iMsgLen = MField::getLengthByType(pstSubField->getType(), pszArray, iLeftLen);
 
-            iMsgLen = MField::getLengthByType(pstField->getType(), pszArray, iLeftLen);
-
-            iRet = pstField->decode(pszArray, iLeftLen);
+            iRet = m_oSubFields[i].decode(pszArray, iLeftLen);
 
             if (iRet != 0) return iRet;
 
@@ -206,7 +177,7 @@ public:
         M_CHECK_FIELD_VER(nVer);
 
         char szValue[32];
-        snprintf(szValue, sizeof(szValue), "%d", m_oSubFields.size());
+        snprintf(szValue, sizeof(szValue), "%u", m_nArrNum);
 
         // 长度
         string sSubPrefix = sPrefix + "    ";
@@ -214,8 +185,8 @@ public:
             append(sSubPrefix).append("Num = ").append(szValue).append("\n");
 
         // 子字段
-        for (auto mf : m_oSubFields) {
-            mf->format(baBuf, sSubPrefix, nVer);
+        for (U16 i = 0; i < m_nArrNum; i++) {
+            m_oSubFields[i].format(baBuf, sSubPrefix, nVer);
         }
     }
 
@@ -228,8 +199,8 @@ public:
         M_CHECK_FIELD_VER(nVer);
         // 子字段
         //string sSubPrefix = sPrefix + "";
-        for (auto mf : m_oSubFields) {
-            mf->toXml(baBuf, sPrefix, nVer);
+        for (U16 i = 0; i < m_nArrNum; i++) {
+            m_oSubFields[i].toXml(baBuf, sPrefix, nVer);
         }
     }
 };

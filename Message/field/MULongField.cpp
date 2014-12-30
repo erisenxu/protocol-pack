@@ -8,26 +8,21 @@
 
 #include "comm/MBaseFuncDef.h"
 
-#include <stdio.h>
-
 /**
- * 构造函数
+ * 显式构造函数
  */
-MULongField::MULongField(U16 nTag, const string& sName, MField* pParent, U16 nVer, U64 ulValue)
-    : MField(nTag, M_FIELD_TYPE_LONG, sName, pParent, nVer),
-      m_ulValue(ulValue)
+void MULongField::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-    //
+    constructField(nTag, M_FIELD_TYPE_ULONG, sName, pParent, nVer);
 }
 
 /**
- * 拷贝构造函数
+ * 初始化函数，会调用显式构造函数
  */
-MULongField::MULongField(const MULongField& stField)
-    : MField(stField),
-      m_ulValue(stField.m_ulValue)
+void MULongField::init(U16 nTag, const string& sName, MField* pParent, U16 nVer, U64 ulValue)
 {
-    //
+    construct(nTag, sName, pParent, nVer);
+    m_ulValue = ulValue;
 }
 
 /**

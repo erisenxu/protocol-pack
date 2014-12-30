@@ -1,6 +1,6 @@
 
 /*
- * @(#) TestUnion3.cpp Created by feimao message creator
+ * @(#) TestUnion3.c Created by @itfriday message creator
  */
 
 #include "TestUnion3.h"

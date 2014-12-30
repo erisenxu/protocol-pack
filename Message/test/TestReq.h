@@ -1,12 +1,13 @@
 
 /*
- * @(#) TestReq.h Created by feimao message creator
+ * @(#) TestReq.h Created by @itfriday message creator
  */
 
 #ifndef TEST_REQ_H
 #define TEST_REQ_H
 
 #include "field/MFieldInc.h"
+#include "StarMacro.h"
 
 /**
  * 测试用消息
@@ -14,35 +15,30 @@
 class M_DLLIMPORT TestReq : public MCompositeField
 {
 private:
-	MULongField* m_pstGID; // GID
-	MIntField* m_pstMoney; // 金币
-	MIntField* m_pstGold;  // 钻石
+	MULongField m_stGID; // GID
+	MIntField m_stMoney; // 金币
+	MIntField m_stGold; // 钻石
 
 public:
 	/**
-	 * 构造函数
+	 * 显式构造函数
 	 */
-	TestReq(U16 nTag = 0, const string& name = string("TestReq"), MField* pParent = NULL, U16 nVer = 0);
-
-	/**
-	 * 析构函数
-	 */
-	virtual ~TestReq();
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestReq"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: GID
 	 */
-	MULongField* getGID() {return m_pstGID;}
+	MULongField* getGID() {return &m_stGID;}
 
 	/**
 	 * Get Function: 金币
 	 */
-	MIntField* getMoney() {return m_pstMoney;}
+	MIntField* getMoney() {return &m_stMoney;}
 
 	/**
 	 * Get Function: 钻石
 	 */
-	MIntField* getGold() {return m_pstGold;}
+	MIntField* getGold() {return &m_stGold;}
 
 	/**
 	 * @override
@@ -62,7 +58,7 @@ public:
 	/**
 	 * @override
 	 */
-	virtual MField* getSubField(U16 nTag);
+	virtual MField* getSubField(U16 nTag, U8 chMode);
 
 	/**
 	 * @override

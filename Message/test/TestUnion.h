@@ -1,12 +1,13 @@
 
 /*
- * @(#) TestUnion.h Created by feimao message creator
+ * @(#) TestUnion.h Created by @itfriday message creator
  */
 
 #ifndef TEST_UNION_H
 #define TEST_UNION_H
 
 #include "field/MFieldInc.h"
+#include "StarMacro.h"
 #include "TestMsg.h"
 
 /**
@@ -15,41 +16,50 @@
 class M_DLLIMPORT TestUnion : public MCompositeField
 {
 private:
-	MShortField* m_pstSelection;    // Just added for simulate union selection
-	MIntField* m_pstMoney; // 金币
-	TestMsg* m_pstTestMsg; // Test message
-	MIntField* m_pstGold;  // 钻石
-
+	MShortField m_stSelection;    // Just added for simulate union selection
+	union
+	{
+		MIntField m_stMoney;                  // 金币
+		TestMsg m_stTestMsg;                  // Test message
+		MIntField m_stGold;                   // 钻石
+		MStringField m_stDesc;                // 描述
+		MArrayField<MIntField, 4> m_stIntField; // 类型列表
+	};
 public:
 	/**
-	 * 构造函数
+	 * 显式构造函数
 	 */
-	TestUnion(U16 nTag = 0, const string& name = string("TestUnion"), MField* pParent = NULL, U16 nVer = 0);
-
-	/**
-	 * 析构函数
-	 */
-	virtual ~TestUnion();
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestUnion"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: Selection
 	 */
-	MShortField* getSelection() {return m_pstSelection;}
+	MShortField* getSelection() {return &m_stSelection;}
 
 	/**
 	 * Get Function: 金币
 	 */
-	MIntField* getMoney() {return m_pstMoney;}
+	MIntField* getMoney() {return &m_stMoney;}
 
 	/**
 	 * Get Function: Test message
 	 */
-	TestMsg* getTestMsg() {return m_pstTestMsg;}
+	TestMsg* getTestMsg() {return &m_stTestMsg;}
 
 	/**
 	 * Get Function: 钻石
 	 */
-	MIntField* getGold() {return m_pstGold;}
+	MIntField* getGold() {return &m_stGold;}
+
+	/**
+	 * Get Function: 描述
+	 */
+	MStringField* getDesc() {return &m_stDesc;}
+
+	/**
+	 * Get Function: 类型列表
+	 */
+	MArrayField<MIntField, 4>* getIntField() {return &m_stIntField;}
 
 	/**
 	 * @override
@@ -69,7 +79,7 @@ public:
 	/**
 	 * @override
 	 */
-	virtual MField* getSubField(U16 nTag);
+	virtual MField* getSubField(U16 nTag, U8 chMode);
 
 	/**
 	 * @override

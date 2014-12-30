@@ -1,12 +1,13 @@
 
 /*
- * @(#) TestMsg.h Created by feimao message creator
+ * @(#) TestMsg.h Created by @itfriday message creator
  */
 
 #ifndef TEST_MSG_H
 #define TEST_MSG_H
 
 #include "field/MFieldInc.h"
+#include "StarMacro.h"
 
 /**
  * Just a Test Message object
@@ -14,35 +15,30 @@
 class M_DLLIMPORT TestMsg : public MCompositeField
 {
 private:
-	MIntField* m_pstMoney;                 // 金币
-	MArrayField<MIntField>* m_pstIntField; // 类型列表
-	MIntField* m_pstGold;                  // 钻石
+	MIntField m_stMoney;                   // 金币
+	MArrayField<MIntField, 4> m_stIntField; // 类型列表
+	MIntField m_stGold;                    // 钻石
 
 public:
 	/**
-	 * 构造函数
+	 * 显式构造函数
 	 */
-	TestMsg(U16 nTag = 0, const string& name = string("TestMsg"), MField* pParent = NULL, U16 nVer = 0);
-
-	/**
-	 * 析构函数
-	 */
-	virtual ~TestMsg();
+	virtual void construct(U16 nTag = 0, const string& sName = string("TestMsg"), MField* pParent = NULL, U16 nVer = 0);
 
 	/**
 	 * Get Function: 金币
 	 */
-	MIntField* getMoney() {return m_pstMoney;}
+	MIntField* getMoney() {return &m_stMoney;}
 
 	/**
 	 * Get Function: 类型列表
 	 */
-	MArrayField<MIntField>* getIntField() {return m_pstIntField;}
+	MArrayField<MIntField, 4>* getIntField() {return &m_stIntField;}
 
 	/**
 	 * Get Function: 钻石
 	 */
-	MIntField* getGold() {return m_pstGold;}
+	MIntField* getGold() {return &m_stGold;}
 
 	/**
 	 * @override
@@ -62,7 +58,7 @@ public:
 	/**
 	 * @override
 	 */
-	virtual MField* getSubField(U16 nTag);
+	virtual MField* getSubField(U16 nTag, U8 chMode);
 
 	/**
 	 * @override

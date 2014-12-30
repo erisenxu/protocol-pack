@@ -20,20 +20,15 @@ protected:
     U8 m_bValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MUByteField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U8 bValue = 0);
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
     
     /**
-     * 拷贝构造函数
+     * 初始化函数，会调用显式构造函数
      */
-    MUByteField(const MUByteField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MUByteField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U8 bValue = 0);
+
     /**
      * 设置字段值
      * @param bValue 字段的值
@@ -45,7 +40,7 @@ public:
      * @return 返回字段的值
      */
     U8 getValue() const {return m_bValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息
@@ -53,7 +48,7 @@ public:
      * @param nVer 编码消息的版本，版本比这个高的字段将被裁剪掉不编码在消息中
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议

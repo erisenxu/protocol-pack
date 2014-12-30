@@ -20,32 +20,27 @@ protected:
     U64 m_ulValue;   // 整数值
 public:
     /**
-     * 构造函数
+     * 显式构造函数
      */
-    MULongField(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U64 ulValue = 0);
+    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
     
     /**
-     * 拷贝构造函数
+     * 初始化函数，会调用显式构造函数
      */
-    MULongField(const MULongField& stField);
-    
-    /**
-     * 析构函数
-     */
-    virtual ~MULongField() {}
-    
+    void init(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0, U64 ulValue = 0);
+
     /**
      * 设置字段值
      * @param ulValue 字段的值
      */
     void setValue(U64 ulValue) {m_ulValue = ulValue;}
-    
+
     /**
      * 取字段的值
      * @return 返回字段的值
      */
     U64 getValue() const {return m_ulValue;}
-    
+
     /**
      * 字段编码
      * @param baBuf 保存字段编码后的协议信息
@@ -53,7 +48,7 @@ public:
      * @return 成功返回0，失败返回错误码
      */
     virtual int encode(MByteArray& baBuf, U16 nVer);
-    
+
     /**
      * 字段解码
      * @param szBuf 要解析的协议

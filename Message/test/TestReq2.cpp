@@ -1,32 +1,21 @@
 
 /*
- * @(#) TestReq2.cpp Created by feimao message creator
+ * @(#) TestReq2.cpp Created by @itfriday message creator
  */
 
 #include "TestReq2.h"
 #include "comm/MBaseFuncDef.h"
 
 /**
- * 构造函数
+ * 显式构造函数
  */
-TestReq2::TestReq2(U16 nTag, const string& name, MField* pParent, U16 nVer)
-	: MCompositeField(nTag, name, pParent, nVer)
+void TestReq2::construct(U16 nTag, const string& sName, MField* pParent, U16 nVer)
 {
-	m_pstTestReq = new TestReq(M_TAG(1), M_NAME("testReq"), M_PARENT(this), M_VERSION(1));
-	m_pstReqInfo = new MArrayField<TestReq>(M_TAG(2), M_NAME("reqInfo"), M_PARENT(this), M_VERSION(1));
-	m_pstTypes = new MArrayField<MUIntField>(M_TAG(30), M_NAME("types"), M_PARENT(this), M_VERSION(1));
-	m_pstGID = new MStringField(M_TAG(4), M_NAME("GID"), M_PARENT(this), M_VERSION(1), M_DEFAULT("0"));
-}
-
-/**
- * 析构函数
- */
-TestReq2::~TestReq2()
-{
-	delete m_pstTestReq;
-	delete m_pstReqInfo;
-	delete m_pstTypes;
-	delete m_pstGID;
+	MCompositeField::construct(nTag, sName, pParent, nVer);
+	m_stTestReq.construct(M_TAG(1), M_NAME("testReq"), M_PARENT(this), M_VERSION(1));
+	m_stReqInfo.construct(M_TAG(2), M_NAME("reqInfo"), M_PARENT(this), M_VERSION(1));
+	m_stTypes.construct(M_TAG(30), M_NAME("types"), M_PARENT(this), M_VERSION(1));
+	m_stGID.init(M_TAG(4), M_NAME("GID"), M_PARENT(this), M_VERSION(1), M_DEFAULT("0"));
 }
 
 /**
@@ -41,10 +30,10 @@ int TestReq2::encode(MByteArray& baBuf, U16 nVer)
 
 	int iOldLen = baBuf.getLength();
 
-	m_pstTestReq->encode(baBuf, nVer);
-	m_pstReqInfo->encode(baBuf, nVer);
-	m_pstTypes->encode(baBuf, nVer);
-	m_pstGID->encode(baBuf, nVer);
+	m_stTestReq.encode(baBuf, nVer);
+	m_stReqInfo.encode(baBuf, nVer);
+	m_stTypes.encode(baBuf, nVer);
+	m_stGID.encode(baBuf, nVer);
 
 	// 这个必须放后面，因为append有可能那个将baBuf的getData的返回地址改变
 	U32 nAddLen = (U32)(baBuf.getLength() - iOldLen);
@@ -64,10 +53,10 @@ void TestReq2::format(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("[").append(getFieldName()).append("]\n");
-	m_pstTestReq->format(baBuf, sSubPrefix, nVer);
-	m_pstReqInfo->format(baBuf, sSubPrefix, nVer);
-	m_pstTypes->format(baBuf, sSubPrefix, nVer);
-	m_pstGID->format(baBuf, sSubPrefix, nVer);
+	m_stTestReq.format(baBuf, sSubPrefix, nVer);
+	m_stReqInfo.format(baBuf, sSubPrefix, nVer);
+	m_stTypes.format(baBuf, sSubPrefix, nVer);
+	m_stGID.format(baBuf, sSubPrefix, nVer);
 }
 
 /**
@@ -79,28 +68,28 @@ void TestReq2::toXml(MByteArray& baBuf, const string& sPrefix, U16 nVer)
 	M_CHECK_FIELD_VER(nVer);
 
 	baBuf.append(sPrefix).append("<").append(getFieldName()).append(">\n");
-	m_pstTestReq->toXml(baBuf, sSubPrefix, nVer);
-	m_pstReqInfo->toXml(baBuf, sSubPrefix, nVer);
-	m_pstTypes->toXml(baBuf, sSubPrefix, nVer);
-	m_pstGID->toXml(baBuf, sSubPrefix, nVer);
+	m_stTestReq.toXml(baBuf, sSubPrefix, nVer);
+	m_stReqInfo.toXml(baBuf, sSubPrefix, nVer);
+	m_stTypes.toXml(baBuf, sSubPrefix, nVer);
+	m_stGID.toXml(baBuf, sSubPrefix, nVer);
 	baBuf.append(sPrefix).append("</").append(getFieldName()).append(">\n");
 }
 
 /**
  * @override
  */
-MField* TestReq2::getSubField(U16 nTag)
+MField* TestReq2::getSubField(U16 nTag, U8 /*chMode*/)
 {
 	switch (nTag)
 	{
 	case 1:
-		return m_pstTestReq;
+		return &m_stTestReq;
 	case 2:
-		return m_pstReqInfo;
+		return &m_stReqInfo;
 	case 30:
-		return m_pstTypes;
+		return &m_stTypes;
 	case 4:
-		return m_pstGID;
+		return &m_stGID;
 	default:
 		return NULL;
 	}
@@ -111,10 +100,10 @@ MField* TestReq2::getSubField(U16 nTag)
  */
 MField* TestReq2::getSubFieldByName(const string& sName)
 {
-	if (sName == "testReq") return m_pstTestReq;
-	if (sName == "reqInfo") return m_pstReqInfo;
-	if (sName == "types") return m_pstTypes;
-	if (sName == "GID") return m_pstGID;
+	if (sName == "testReq") return &m_stTestReq;
+	if (sName == "reqInfo") return &m_stReqInfo;
+	if (sName == "types") return &m_stTypes;
+	if (sName == "GID") return &m_stGID;
 	return NULL;
 }
 

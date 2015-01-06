@@ -6,7 +6,7 @@ Protocol Pack is a way of encoding or decoding structured data, It's similar wit
 Why Use Protocol-pack but not Protocol Buffer?
 =============
 First, the Protocol Pack is easier to understand and use. The code it produces is very simple.
-Second, the Protocol Pack supports c language, witch is used in many game server.
+Second, the Protocol Pack supports c language, which is used in many game servers.
 
 Quick Example
 =============
@@ -14,10 +14,10 @@ You write a .xml file like this:
 
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 
-<field-config version="1">
-	<struct name="Person"	desc="Person Object">
-		<field	name="ID"		type="uint"		version="1"		default="0"		tag="1"		desc="ID of person" />
-		<field	name="Name"		type="string"	version="1"		count="20"		tag="2"		desc="Name of person" />
-		<field	name="Email"	type="string"	version="1"		count="30"		tag="3"		desc="Email of person" />
-	</struct>
-</field-config>
+&lt;field-config version="1"><br>
+&nbsp;&nbsp;&lt;struct name="Person"	desc="Person Object"><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;field	name="ID"		type="uint"		version="1"		default="0"		tag="1"		desc="ID of person" /><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;field	name="Name"		type="string"	version="1"		count="20"		tag="2"		desc="Name of person" /><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;field	name="Email"	type="string"	version="1"		count="30"		tag="3"		desc="Email of person" /><br>
+&nbsp;&nbsp;&lt;/struct><br>
+&lt;/field-config><br>

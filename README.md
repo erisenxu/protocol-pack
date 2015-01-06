@@ -49,5 +49,5 @@ Or if you are using c, you will get the following c files:
 Or if you are using Java, you will get the following Java file:
   Person.java
 
-Then you add these files to your application,
+Then you add these files to your application, and compile them with your application.
 </pre>

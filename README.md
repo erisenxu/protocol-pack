@@ -5,7 +5,7 @@ Protocol Pack is a way of encoding or decoding structured data, It's similar wit
 
 Why Use Protocol-pack but not Protocol Buffer?
 =============
-First, the Protocol Pack is easier to understand and use. The code it produces is very simple.
+First, the Protocol Pack is easier to understand and use. The code it produces is very simple.<br>
 Second, the Protocol Pack supports c language, which is used in many game servers.
 
 Quick Example

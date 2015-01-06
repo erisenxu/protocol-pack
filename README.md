@@ -22,6 +22,7 @@ You write a .xml file like this:
 	&lt;/struct>
 &lt;/field-config>
 </pre>
+
 <!-- The following code is for txt readers -->
 <!--
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
@@ -34,3 +35,19 @@ You write a .xml file like this:
 	</struct>
 </field-config>
 -->
+<pre>
+Then you use protocol buffer generator, to produce code in C++, C, C# or Java.
+
+If you are using C++, you will get the following C++ files: 
+  Person.h
+  Person.cpp
+
+Or if you are using c, you will get the following c files:
+  Person.h
+  Person.c
+
+Or if you are using Java, you will get the following Java file:
+  Person.java
+
+Then you add these files to your application,
+</pre>

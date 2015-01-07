@@ -6,7 +6,8 @@ Protocol Pack is a way of encoding or decoding structured data, It's similar wit
 Why Use Protocol-pack but not Protocol Buffer?
 =============
 First, the Protocol Pack is easier to understand and use. The code it produces is very simple.<br>
-Second, the Protocol Pack supports c language, which is used in many game servers.
+Second, the Protocol Pack supports c language, which is used in many game servers.<br>
+Third, the Protocol Pack supports Union structure, which uses less RAM, this make it more suitable to develop mobile applications.
 
 Quick Example
 =============
@@ -50,4 +51,6 @@ Or if you are using Java, you will get the following Java file:
   Person.java
 
 Then you add these files to your application, and compile them with your application.
+
+For a more complete example, see the tutorials.
 </pre>

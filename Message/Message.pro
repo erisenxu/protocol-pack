@@ -36,8 +36,6 @@ HEADERS += \
     field/MCompositeField.h \
     field/MField.h \
     field/MFieldInc.h \
-    field/MFieldInfo.cpp_bak \
-    field/MFieldInfo.h_bak \
     field/MIntField.h \
     field/MLongField.h \
     field/MShortField.h \

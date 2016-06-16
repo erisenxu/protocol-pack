@@ -541,7 +541,7 @@ def generateMacroFile(outdir, fileName, enums, macros):
 		pass;
 	destFile = open('%s/%s.h'%(outdir, fileName), 'w');
 	destFile.write('/*\n * @(#) %s.h Created by feimao message creator\n */\n'%fileName);
-	destFile.write('\n#ifndef %s\n#define %s\n\n'%(getClassMacro(fileName), getClassMacro(fileName)));
+	destFile.write('\n#ifndef %s_H\n#define %s_H\n\n'%(getClassMacro(fileName), getClassMacro(fileName)));
 
 	macroString = '';
 	for fi in macros:
@@ -705,3 +705,11 @@ if __name__ == '__main__':
 				unionType = UNION_GENERATE_TYPE_STRUCT;
 
 	genernateFieldFile(xmlSrcPath, macroFileName, outputDir, language, unionType);
+
+	#genernateFieldFile('.', 'StartMacro', '../../CMessage/test', 'c');
+	#genernateFieldFile('.', 'StartMacro', '../test', 'cpp');
+	#genernateFieldFile('../../PopLevelEditor/protocol', 'PopMacro', '../../CMessage/test', 'c');
+	#genernateFieldFile('../../PopLevelEditor/protocol', 'PopMacro', '../../PopLevelEditor/protocol', 'cpp');
+	#genernateFieldFile('../../FConnector/conf', 'ConfigMacro', '../../FConnector/Config', 'c');
+	#genernateFieldFile(r'E:\Xu\QT\ResConvert\project', 'ConfigMacro', r'E:\Xu\QT\ResConvert\project', 'cpp');
+

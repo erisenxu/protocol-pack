@@ -127,10 +127,19 @@
 
 #ifndef WIN32
 #define STRNCPY(szDest, nDestSize, szSrc, nMaxCount)  strncpy(szDest, szSrc, nDestSize)
+#define SNPRINTF(szBuf, dwBufSize, szFormat, args...) \
+    snprintf((szBuf), (dwBufSize) - 1, szFormat, ##args); \
+    (szBuf)[(dwBufSize) - 1] = 0
 #else
 #define STRNCPY(szDest, nDestSize, szSrc, nMaxCount)  strncpy_s(szDest, nDestSize, szSrc, nMaxCount)
+#define SNPRINTF(szBuf, dwBufSize, szFormat, ...) \
+    _snprintf((szBuf), (dwBufSize) - 1, szFormat, ##__VA_ARGS__); \
+    (szBuf)[(dwBufSize) - 1] = 0
 #endif
 
 #define UNUSED(val)
+
+#define CLOSE_SOCKET(s) \
+    if (s != INADDR_NONE) close(s)
 
 #endif

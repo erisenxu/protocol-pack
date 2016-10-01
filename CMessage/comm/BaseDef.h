@@ -43,4 +43,7 @@ typedef int S32;
 typedef short S16;
 typedef char S8;
 
+/* 共享内存默认权限 */
+#define SHM_DFT_ACCESS  0664
+
 #endif

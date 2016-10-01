@@ -1,5 +1,5 @@
-/*
- * @(#) ByteArray.c Created on 2010-12-19
+/**
+ * @(#) ByteArray.c 字节数组对象，一般用于消息编码解码
  *
  * Copyright (c) 2014-2016 Erisen Xu (@itfriday)
  *
@@ -20,6 +20,10 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * @author Erisen Xu
+ * @version 1.0
+ * @history 2010-12-19 ErisenXu 创建文件
  */
 
 #include "ByteArray.h"

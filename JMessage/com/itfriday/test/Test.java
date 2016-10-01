@@ -40,8 +40,6 @@ public class Test {
         stMsgResponse.format(stBa1, "CsMsgResponse", "");
         System.out.print(stBa1.toString());
 
-        //printf("%s", stBa1.toString());
-
         /* 转换为xml */
         stBa1.delete(0, stBa1.length());
         stMsgResponse.toXml(stBa1, "CsMsgResponse", "");

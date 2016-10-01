@@ -26,6 +26,7 @@
 #define MBASE_FUNC_DEF_H
 
 #include <stdio.h>
+#include <string.h>
 
 #define MAlloc(nSize)           malloc(nSize)
 #define MFree(szBuf, nSize)     free(szBuf)
@@ -115,5 +116,30 @@
     *pszBuf++ = (U8)(((dwValue) >> 16) & 0xFF); \
     *pszBuf++ = (U8)(((dwValue) >> 8) & 0xFF); \
     *pszBuf++ = (U8)((dwValue) & 0xFF)
+
+#ifndef WIN32
+#define STRNCPY(szDest, nDestSize, szSrc, nMaxCount)  strncpy(szDest, szSrc, nDestSize)
+#define SNPRINTF(szBuf, dwBufSize, szFormat, args...) \
+    snprintf((szBuf), (dwBufSize) - 1, szFormat, ##args); \
+    (szBuf)[(dwBufSize) - 1] = 0
+#else
+#define STRNCPY(szDest, nDestSize, szSrc, nMaxCount)  strncpy_s(szDest, nDestSize, szSrc, nMaxCount)
+#define SNPRINTF(szBuf, dwBufSize, szFormat, ...) \
+    _snprintf((szBuf), (dwBufSize) - 1, szFormat, ##__VA_ARGS__); \
+    (szBuf)[(dwBufSize) - 1] = 0
+#endif
+
+#define STRCPY(szDest, szSrc, nMaxCount) \
+    do \
+    { \
+        if (NULL == szSrc) \
+        { \
+            *szDest = '\0'; \
+        } \
+        else \
+        { \
+            STRNCPY(szDest, nMaxCount, szSrc, nMaxCount); \
+        } \
+    } while(0)
 
 #endif

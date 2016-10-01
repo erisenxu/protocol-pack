@@ -26,25 +26,26 @@
 #define MFIELD_H
 
 #include "comm/MByteArray.h"
+#include "comm/MBaseFuncDef.h"
+
 #include <stdlib.h>
 
-/**
- * 检查字段版本，若高于指定版本，则返回0
- */
-#define M_CHECK_FIELD_VER_RET(nVer) \
-    if (nVer != 0 && m_nVer > nVer) return 0
-
-/**
- * 检查字段版本，若高于指定版本，则返回0
- */
-#define M_CHECK_FIELD_VER(nVer) \
-    if (nVer != 0 && m_nVer > nVer) return
-
-#define M_TAG(nTag)         nTag
-#define M_NAME(name)        name
-#define M_VERSION(nVer)     nVer
-#define M_DEFAULT(value)    value
-#define M_PARENT(value)     value
+enum MFieldDataType
+{
+    M_FIELD_TYPE_INVALID = 0, // 不合法(未初始化)的字段类型
+    M_FIELD_TYPE_BYTE = 1,    // S8，占1个字节
+    M_FIELD_TYPE_UBYTE = 2,   // U8，占1个字节
+    M_FIELD_TYPE_SHORT = 3,   // S16，占2个字节
+    M_FIELD_TYPE_USHORT = 4,  // U16，占2个字节
+    M_FIELD_TYPE_INT = 5,     // S32，占4个字节
+    M_FIELD_TYPE_UINT = 6,    // U32，占4个字节
+    M_FIELD_TYPE_LONG = 7,    // S64，占8个字节
+    M_FIELD_TYPE_ULONG = 8,   // U64，占8个字节
+    M_FIELD_TYPE_STRING = 9,  // 字符串，特殊的TLV字段
+    M_FIELD_TYPE_BYTES = 10,  // 字节数组，特殊的TLV字段
+    M_FIELD_TYPE_TLV = 11,    // Tag-Length-Value字段，长度由length决定。其中length占位4个字节，其长度不包含自己
+    M_FIELD_TYPE_ARRAY = 12   // 数组
+};
 
 /**
  * <code>MField</code>协议字段类。<br>
@@ -54,148 +55,6 @@
 class M_DLLIMPORT MField
 {
 public:
-    enum MFieldDataType
-    {
-        M_FIELD_TYPE_INVALID = 0, // 不合法(未初始化)的字段类型
-        M_FIELD_TYPE_BYTE = 1,    // S8，占1个字节
-        M_FIELD_TYPE_UBYTE = 2,   // U8，占1个字节
-        M_FIELD_TYPE_SHORT = 3,   // S16，占2个字节
-        M_FIELD_TYPE_USHORT = 4,  // U16，占2个字节
-        M_FIELD_TYPE_INT = 5,     // S32，占4个字节
-        M_FIELD_TYPE_UINT = 6,    // U32，占4个字节
-        M_FIELD_TYPE_LONG = 7,    // S64，占8个字节
-        M_FIELD_TYPE_ULONG = 8,   // U64，占8个字节
-        M_FIELD_TYPE_STRING = 9,  // 字符串，特殊的TLV字段
-        M_FIELD_TYPE_BYTES = 10,  // 字节数组，特殊的TLV字段
-        M_FIELD_TYPE_TLV = 11,    // Tag-Length-Value字段，长度由length决定。其中length占位4个字节，其长度不包含自己
-        M_FIELD_TYPE_ARRAY = 12   // 数组
-    };
-    enum MGetSubFieldMode
-    {
-        M_GET_SUB_FIELD_MODE_NORMAL = 0,    // 一般获取子字段
-        M_GET_SUB_FIELD_MODE_DECODE = 1     // 解码消息时，获取子字段
-    };
-protected:
-    U16 m_nTag;         // 字段标签，表明它是什么字段
-    U16 m_nVer;         // 字段引入版本。注：字段版本其实可以不用，因本协议可以向下、向上兼容。
-                        // 但是可以将高版本的字段在低版本的协议中裁剪掉，以减少包的大小及提升打包解包时间
-    U8 m_bType;         // 字段数据类型，见M_FIELD_TYPE_*系列
-    string m_sName;     // 字段名字
-    MField* m_pParent;  // 父字段对象
-public:
-    /**
-     * 显式构造函数
-     */
-    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
-
-    /**
-     * 设置字段标签
-     * @param nTag 字段标签
-     */
-    void setTag(U16 nTag) {m_nTag = nTag;}
-
-    /**
-     * 取字段标签
-     * @return 返回字段标签
-     */
-    U16 getTag() const {return m_nTag;}
-
-    /**
-     * 设置字段类型
-     * @param bType 字段类型
-     */
-    void setType(U8 bType) {m_bType = bType;}
-
-    /**
-     * 取字段类型
-     * @return 返回字段类型
-     */
-    U8 getType() const {return m_bType;}
-
-    /**
-     * 设置字段名字
-     * @param sName 字段名字
-     */
-    void setFieldName(const string& sName) {m_sName = sName;}
-
-    /**
-     * 取字段名字
-     * @return 返回字段名字
-     */
-    string getFieldName() {return m_sName;}
-
-    /**
-     * 取字段名字
-     * @return 返回字段名字
-     */
-    const string& getFieldName() const {return m_sName;}
-
-    /**
-     * 设置父字段对象
-     * @param pParent 父字段对象
-     */
-    void setParent(MField* pParent) {m_pParent = pParent;}
-
-    /**
-     * 取父字段对象
-     * @return 返回父字段对象
-     */
-    MField* getParent() const {return m_pParent;}
-
-    /**
-     * 字段编码
-     * @param baBuf 保存字段编码后的协议信息
-     * @param nVer 编码消息的版本，版本比这个高的字段将被裁剪掉不编码在消息中
-     * @param 成功返回0，失败返回错误码
-     */
-    virtual int encode(MByteArray& baBuf, U16 nVer);
-
-    /**
-     * 字段解码
-     * @param szBuf 要解析的协议
-     * @param iBufLen 协议的长度
-     */
-    virtual int decode(const char* /*szBuf*/, int /*iBufLen*/) {return 0;}
-    
-    /**
-     * 将字段格式化成可读形式
-     * @param baBuf 保存字段信息的缓存区
-     * @param sPrefix 格式化字符串的前缀
-     */
-    virtual void format(MByteArray& /*baBuf*/, const string& /*sPrefix*/, U16 /*nVer*/) {}
-
-    /**
-     * 将字段格式化成XML形式
-     * @param baBuf 保存字段信息的缓存区
-     * @param sPrefix 格式化字符串的前缀
-     */
-    virtual void toXml(MByteArray& /*baBuf*/, const string& /*sPrefix*/, U16 /*nVer*/) {}
-
-    /**
-     * 通过字段标签查找字段
-     * @param nTag 字段标签
-     * @param chMode 获取字段标签时的用途或场景，见GET_SUB_FIELD_MODE_*
-     * @return 返回与字段标签对应的字段对象
-     */
-    virtual MField* getSubField(U16 /*nTag*/, U8 /*chMode*/) {return NULL;}
-
-    /**
-     * 通过字段名查找字段
-     * @param sName 字段名
-     * @return 返回与字段名对应的字段对象
-     */
-    virtual MField* getSubFieldByName(const string& /*sName*/) {return NULL;}
-
-    /**
-     * 新增一个子字段
-     * @param 返回新增的子字段
-     */
-    virtual MField* appendSubField() {return NULL;}
-
-    /**
-     * 设置字段的值
-     */
-    virtual void setValue(const string& /*sValue*/) {}
 
     /**
      * 取某个类型字段的长度
@@ -206,7 +65,330 @@ public:
      */
     static int getLengthByType(U8 bType, const char* szBuf, int iBufLen);
 
-protected:    
+    /**
+     * 整数byte字段编码
+     * @param chValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(S8 chValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pchValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(S8* pchValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数unsigned byte字段编码
+     * @param bValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(U8 bValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pbValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(U8* pbValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数short字段编码
+     * @param shValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(S16 shValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pshValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(S16* pshValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数unsigned short字段编码
+     * @param nValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(U16 nValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pnValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(U16* pnValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数int字段编码
+     * @param iValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(S32 iValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param piValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(S32* piValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数unsigned int字段编码
+     * @param dwValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(U32 dwValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pdwValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(U32* pdwValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数long long字段编码
+     * @param llValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(S64 llValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pllValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(S64* pllValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数unsigned long long字段编码
+     * @param ullValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(U64 ullValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pullValue 要解码的字段的值
+     * @param szBuf 要解析的协议
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(U64* pullValue, const char* szBuf, int iBufLen);
+
+    /**
+     * 整数byte字段编码
+     * @param chValue 字段的值
+     * @param baBuf 保存字段编码后的协议信息
+     * @param nTag 字段的tag
+     * @return 成功返回0，失败返回错误码
+     */
+    static int encode(const char* szValue, MByteArray& baBuf, U16 nTag);
+
+    /**
+     * 字段解码
+     * @param pszValue 要解码的字段
+     * @param dwBufSize 字段的最大长度
+     * @param iBufLen 协议的长度
+     * @return 成功返回0，失败返回错误码
+     */
+    static int decode(char* pszValue, U32 dwBufSize, const char* szBuf, int iBufLen);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param chValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, S8 chValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param chValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, S8 chValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param bValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, U8 bValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param bValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, U8 bValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param shValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, S16 shValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param shValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, S16 shValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param nValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, U16 nValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param nValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, U16 nValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param iValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, S32 iValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param iValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, S32 iValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param dwValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, U32 dwValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param dwValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, U32 dwValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param llValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, S64 llValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param llValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, S64 llValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param ullValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, U64 ullValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param ullValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, U64 ullValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成可读形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param szValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void format(MByteArray& baBuf, const string& sFieldName, const char* szValue, const string& sPrefix);
+
+    /**
+     * 将字段格式化成XML形式
+     * @param baBuf 保存字段信息的缓存区
+     * @param sFieldName 字段的名称
+     * @param szValue 字段的值
+     * @param sPrefix 格式化字符串的前缀
+     */
+    static void toXml(MByteArray& baBuf, const string& sFieldName, const char* szValue, const string& sPrefix);
+
     /**
      * 从消息中读取一个字节，不检查长度
      * @param szBuf 消息字段
@@ -227,11 +409,267 @@ protected:
      * @return 返回读取的short
      */
     static U32 readInt(const char* szBuf);
-
-    /**
-     * 显式构造函数
-     */
-    void constructField(U16 nTag = 0, U8 bType = M_FIELD_TYPE_INT, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
 };
+
+/**
+ * 字段编码
+ * @param baBuf 保存字段编码后的协议信息
+ * @param nTag 字段标签
+ * @return 成功返回0，失败返回错误码
+ */
+#define M_ARRAY_FIELD_ENCODE(baBuf, nTag, nArrNum, fnGetFieldByIndex) \
+    do \
+    { \
+        /* 编码Tag及Type */ \
+        baBuf.append((U16)nTag).append((U8)M_FIELD_TYPE_ARRAY); \
+        /* 先将数组长度设置为0 */ \
+        baBuf.append((U32)0); \
+        /* 记录下当前数组长度 */ \
+        int iArrOldLen = baBuf.getLength(); \
+        /* 对数组进行编码 */ \
+        /* 数组数量 */ \
+        baBuf.append((U16)nArrNum); \
+        /* 数组子字段 */ \
+        for (U16 i = 0; i < nArrNum; i++) { \
+            fnGetFieldByIndex(i).encode(baBuf, nTag); \
+        } \
+        /* 修正数组长度 */ \
+        /* 这个必须放后面，因为append有可能那个将baBuf的getData的返回地址改变 */ \
+        U32 nArrAddLen = (U32)(baBuf.getLength() - iArrOldLen); \
+        char* pszMsg = baBuf.getData() + (baBuf.getLength() - nArrAddLen - sizeof(U32)); \
+        M_U32_TO_CHAR(pszMsg, nArrAddLen); \
+    } while (0)
+
+/**
+ * 数组字段解码
+ * @param szBuf 要解析的协议
+ * @param iBufLen 协议的长度
+ * @param nMaxNum 数组的最大长度
+ * @param fnGetFieldByIndex 解码数组元素字段的函数
+ * @return 成功返回0，失败返回错误码
+ */
+#define M_ARRAY_FIELD_DECODE(szBuf, iBufLen, nMaxNum, fnGetFieldByIndex) \
+    do \
+    { \
+        int iHdrLen; \
+        const char* pszArray; \
+        U16 nArrayNum = 0; \
+        int iLeftLen; \
+        int iRet = -1; \
+        int iMsgLen = 0; \
+        U16 i; \
+        U8 bType; \
+        if (NULL == szBuf) return M_ERROR_INPUT_PARAM_NULL; \
+        iHdrLen = sizeof(U16) + sizeof(U8) + sizeof(U32); \
+        pszArray = szBuf + iHdrLen; \
+        iLeftLen = iBufLen - iHdrLen; \
+        /* 数组长度 */ \
+        M_CHAR_TO_U16(nArrayNum, pszArray); \
+        iLeftLen -= sizeof(nArrayNum); \
+        /* 数组长度超过了最大值的处理 */ \
+        if (nArrayNum > nMaxNum) return M_ERROR_DECODE_ARRAY_LONG; \
+        /* 数组元素类型 */ \
+        bType = *(pszArray + sizeof(U16)); \
+        /* 解析子字段 */ \
+        for (i = 0; i < nArrayNum; i++) \
+        { \
+            /* 通过类型获得数据长度 */ \
+            iMsgLen = MField::getLengthByType(bType, pszArray, iLeftLen); \
+            if (iLeftLen < iMsgLen) \
+            { \
+                return M_ERROR_DECODE_BUFSIZE_SHORT; \
+            } \
+            iRet = fnGetFieldByIndex(i).decode(pszArray, iLeftLen); \
+            if (iRet != 0) return iRet; \
+            pszArray += iMsgLen; \
+            iLeftLen -= iMsgLen; \
+        } \
+        return 0; \
+    } while(0)
+
+/**
+ * 字段编码
+ * @param baBuf 保存字段编码后的协议信息
+ * @param nTag 字段标签
+ * @return 成功返回0，失败返回错误码
+ */
+#define M_ARRAY_ENCODE(baBuf, nTag, nArrNum, arrfield) \
+    do \
+    { \
+        /* 编码Tag及Type */ \
+        baBuf.append((U16)nTag).append((U8)M_FIELD_TYPE_ARRAY); \
+        /* 先将数组长度设置为0 */ \
+        baBuf.append((U32)0); \
+        /* 记录下当前数组长度 */ \
+        int iArrOldLen = baBuf.getLength(); \
+        /* 对数组进行编码 */ \
+        /* 数组数量 */ \
+        baBuf.append((U16)nArrNum); \
+        /* 数组子字段 */ \
+        for (U16 i = 0; i < nArrNum; i++) { \
+            MField::encode(arrfield[i], baBuf, nTag); \
+        } \
+        /* 修正数组长度 */ \
+        /* 这个必须放后面，因为append有可能那个将baBuf的getData的返回地址改变 */ \
+        U32 nArrAddLen = (U32)(baBuf.getLength() - iArrOldLen); \
+        char* pszMsg = baBuf.getData() + (baBuf.getLength() - nArrAddLen - sizeof(U32)); \
+        M_U32_TO_CHAR(pszMsg, nArrAddLen); \
+    } while (0)
+
+/**
+ * 数组字段解码
+ * @param szBuf 要解析的协议
+ * @param iBufLen 协议的长度
+ * @param nMaxNum 数组的最大长度
+ * @param arrfield 解码数组元素字段的函数
+ * @return 成功返回0，失败返回错误码
+ */
+#define M_ARRAY_DECODE(szBuf, iBufLen, nMaxNum, arrfield) \
+    do \
+    { \
+        int iHdrLen; \
+        const char* pszArray; \
+        U16 nArrayNum = 0; \
+        int iLeftLen; \
+        int iRet = -1; \
+        int iMsgLen = 0; \
+        U16 i; \
+        U8 bType; \
+        if (NULL == szBuf) return M_ERROR_INPUT_PARAM_NULL; \
+        iHdrLen = sizeof(U16) + sizeof(U8) + sizeof(U32); \
+        pszArray = szBuf + iHdrLen; \
+        iLeftLen = iBufLen - iHdrLen; \
+        /* 数组长度 */ \
+        M_CHAR_TO_U16(nArrayNum, pszArray); \
+        iLeftLen -= sizeof(nArrayNum); \
+        /* 数组长度超过了最大值的处理 */ \
+        if (nArrayNum > nMaxNum) return M_ERROR_DECODE_ARRAY_LONG; \
+        /* 数组元素类型 */ \
+        bType = *(pszArray + sizeof(U16)); \
+        /* 解析子字段 */ \
+        for (i = 0; i < nArrayNum; i++) \
+        { \
+            /* 通过类型获得数据长度 */ \
+            iMsgLen = MField::getLengthByType(bType, pszArray, iLeftLen); \
+            if (iLeftLen < iMsgLen) \
+            { \
+                return M_ERROR_DECODE_BUFSIZE_SHORT; \
+            } \
+            iRet = MField::decode(&arrfield[i], pszArray, iLeftLen); \
+            if (iRet != 0) return iRet; \
+            pszArray += iMsgLen; \
+            iLeftLen -= iMsgLen; \
+        } \
+        return 0; \
+    } while(0)
+
+/**
+ * 格式化成可读形式
+ * @param baBuf 保存字段格式化后的信息
+ * @param sFieldName 字段名称
+ */
+#define M_ARRAY_FIELD_FORMAT(baBuf, sFieldName, nArrNum, fnGetFieldByIndex, sPrefix) \
+    do \
+    { \
+        /* 数组子字段 */ \
+        for (U16 i = 0; i < nArrNum; i++) { \
+            fnGetFieldByIndex(i).format(baBuf, sFieldName, sPrefix); \
+        } \
+    } while (0)
+
+/**
+ * 格式化成可读形式
+ * @param baBuf 保存字段格式化后的信息
+ * @param sFieldName 字段名称
+ */
+#define M_ARRAY_FORMAT(baBuf, sFieldName, nArrNum, arrfield, sPrefix) \
+    do \
+    { \
+        /* 数组子字段 */ \
+        for (U16 i = 0; i < nArrNum; i++) { \
+            MField::format(baBuf, sFieldName, arrfield[i], sPrefix); \
+        } \
+    } while (0)
+
+/**
+ * 格式化成XML形式
+ * @param baBuf 保存字段格式化后的信息
+ * @param sFieldName 字段名称
+ */
+#define M_ARRAY_FIELD_TOXML(baBuf, sFieldName, nArrNum, fnGetFieldByIndex, sPrefix) \
+    do \
+    { \
+        /* 数组子字段 */ \
+        for (U16 i = 0; i < nArrNum; i++) { \
+            fnGetFieldByIndex(i).toXml(baBuf, sFieldName, sPrefix); \
+        } \
+    } while (0)
+
+/**
+ * 格式化成XML形式
+ * @param baBuf 保存字段格式化后的信息
+ * @param sFieldName 字段名称
+ */
+#define M_ARRAY_TOXML(baBuf, sFieldName, nArrNum, arrfield, sPrefix) \
+    do \
+    { \
+        /* 数组子字段 */ \
+        for (U16 i = 0; i < nArrNum; i++) { \
+            MField::toXml(baBuf, sFieldName, arrfield[i], sPrefix); \
+        } \
+    } while (0)
+
+/**
+ * 复合字段解码
+ * @param szBuf 要解析的协议
+ * @param iBufLen 协议的长度
+ * @return 成功返回0，失败返回错误码
+ */
+#define M_FIELD_DECODE(szBuf, iBufLen) \
+    do \
+    { \
+        int iMinLen;    /* 字段最小长度 */ \
+        U16 nTag = 0; \
+        U8 bType = 0; \
+        const char* pszBuf; \
+        int iLeftLen; \
+        int iFieldLen; \
+        int iRet = -1; \
+        if (NULL == szBuf) return M_ERROR_INPUT_PARAM_NULL; \
+        iMinLen = sizeof(U16) + sizeof(U8);    /* 字段最小长度 */ \
+        pszBuf = szBuf + iMinLen + sizeof(U32); \
+        iLeftLen = iBufLen - iMinLen - sizeof(U32); \
+        if (iLeftLen < 0) \
+        { \
+            return M_ERROR_DECODE_BUFSIZE_SHORT; \
+        } \
+        /* 求字段长度 */ \
+        iLeftLen = MField::readInt(szBuf + iMinLen); \
+        while (iLeftLen > 0) \
+        { \
+            /* 解析Tag和Type */ \
+            if (iLeftLen < iMinLen) \
+            { \
+                return M_ERROR_DECODE_BUFSIZE_SHORT; \
+            } \
+            /* Tag和类型 */ \
+            nTag = MField::readShort(pszBuf); \
+            bType = MField::readByte(pszBuf + sizeof(nTag)); \
+            /* 消息长度 */ \
+            iFieldLen = MField::getLengthByType(bType, pszBuf, iLeftLen); \
+            if (iFieldLen == M_ERROR_DECODE_BUFSIZE_SHORT || iLeftLen < iFieldLen) \
+            { \
+                return M_ERROR_DECODE_BUFSIZE_SHORT; \
+            } \
+            /* 取消息对象 */ \
+            iRet = decodeSubField(pszBuf, iLeftLen, nTag); \
+            /* 对认识的字段进行解码，不认识的字段直接丢弃 */ \
+            if (iRet != 0) return iRet; \
+            /* 不认识的字段，直接丢弃 (兼容旧版本) */ \
+            pszBuf += iFieldLen; \
+            iLeftLen -= iFieldLen; \
+        } \
+        return 0; \
+    } while (0)
 
 #endif /* defined(MFIELD_H) */

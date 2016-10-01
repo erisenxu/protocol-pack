@@ -1,5 +1,5 @@
 /*
- * @(#) MCompositeField.h Created on 2014-03-27
+ * @(#) MFieldHandler.cpp Created on 2014-03-27
  *
  * Copyright (c) 2014-2016 Erisen Xu (@itfriday)
  *
@@ -22,30 +22,27 @@
  * THE SOFTWARE.
  */
 
-#ifndef MCOMPOSITE_FIELD_H
-#define MCOMPOSITE_FIELD_H
-
-#include "MField.h"
+#include "MFieldHandler.h"
+#include "comm/MBaseFuncDef.h"
+#include <string.h>
 
 /**
- * <code>MCompositeField</code>组合协议字段类。<br>
- * @version 1.0
- * @author 徐勇(Erisen Xu)
+ * 构造函数
  */
-class M_DLLIMPORT MCompositeField : public MField
+MFieldHandler::MFieldHandler()
+    : m_pstParent(NULL),
+      m_ullClientData(0)
 {
-public:
-    /**
-     * 显式构造函数
-     */
-    virtual void construct(U16 nTag = 0, const string& sName = "", MField* pParent = NULL, U16 nVer = 0);
+    memset(m_szFieldName, 0, sizeof(m_szFieldName));
+}
 
-    /**
-     * 字段解码
-     * @param szBuf 要解析的协议
-     * @param iBufLen 协议的长度
-     */
-    virtual int decode(const char* szBuf, int iBufLen);
-};
+/**
+ * 设置字段的名称
+ * @param szFieldName 字段的名称
+ */
+void MFieldHandler::setFieldName(const char* szFieldName)
+{
+    if (NULL == szFieldName) return;
+    STRNCPY(m_szFieldName, sizeof(m_szFieldName), szFieldName, sizeof(m_szFieldName));
+}
 
-#endif

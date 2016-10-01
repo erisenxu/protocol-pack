@@ -1,1 +1,1 @@
-python ../CMessage-Creator/generator.py -s ../CMessage-Creator/ -d ./test -l cpp -m MsgMacro
+python ../CMessage-Creator/generator.py -s ../protocol-def/ -d ./test -l cpp -m MsgMacro

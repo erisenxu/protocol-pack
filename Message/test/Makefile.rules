@@ -7,34 +7,22 @@
 #                                                                      #
 ########################################################################
 
-# build flag for so file
-ifdef SO
-	export SO
-endif
-
-# build flag for product ouput directory
-ifdef PRODUCT
-	export PRODUCT
-endif
-
 # Definition for build directory
 OBJ_DIR  = objs
-LIB_DIR  = lib
 INC_DIR  = ./
 SRC_DIR  = ./
 
 # Definitions for build command
 CPP = g++ -c -D_GNU_SOURCE -fPIC -g
 
-ifeq ($(SO), 1)
-	LINK = g++ -shared -Wall -fPIC -g
-	TARGET = $(LIB_DIR)/libMessage.so
-else
-	LINK = ar -rcs
-	TARGET = $(LIB_DIR)/libMessage.a
-endif
+# Definitions for build command
+CPP = g++ -c -D_GNU_SOURCE -fPIC -g
 
-CXXINCS = -I"$(INC_DIR)"
+TARGET = Message
+
+LINK = g++ -Wall -fPIC -g
+
+CXXINCS = -I"$(INC_DIR)" -I"$(INC_DIR)/../"
 
 CXXFLAGS = $(CXXINCS)
 
@@ -44,4 +32,5 @@ all: $(ALL)
 
 MK_DIR:
 	@mkdir -p $(OBJ_DIR)
-	@mkdir -p $(LIB_DIR)
+	@mkdir -p $(OBJ_DIR)/handler
+

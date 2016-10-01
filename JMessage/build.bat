@@ -1,0 +1,1 @@
+javac -encoding utf8 -d .\Classes com\itfriday\test\Test.java

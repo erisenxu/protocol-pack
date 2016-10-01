@@ -7,7 +7,11 @@ import com.itfriday.utils.ToolException;
 public class Test {
 
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        try {
+            new Test().ppTest();
+        } catch (ToolException ex) {
+            System.out.println("error :" + ex.getMessage());
+        }
     }
 
     private void ppTest() throws ToolException {
@@ -15,7 +19,7 @@ public class Test {
         stMsgResponse.setCmd((short)MsgMacro.CS_MSG_GET_FRIEND_LIST);
         stMsgResponse.setEno((short) 0);
 
-        stMsgResponse.getRespData().setSelector((short) com.itfriday.clinic.pp.MsgMacro.CS_MSG_GET_FRIEND_LIST);
+        stMsgResponse.getRespData().setSelector((short) MsgMacro.CS_MSG_GET_FRIEND_LIST);
         stMsgResponse.getRespData().getGetFriends().setFriendNumber((byte)2);
         stMsgResponse.getRespData().getGetFriends().getFriendInfo(0).setGID(0x12345678l);
         stMsgResponse.getRespData().getGetFriends().getFriendInfo(0).setFriendName("ErisenXu");
@@ -32,31 +36,31 @@ public class Test {
 
         StringBuilder stBa1 = new StringBuilder();
 
-        /* ¸ñÊ½»¯ */
+        /* æ ¼å¼åŒ– */
         stMsgResponse.format(stBa1, "CsMsgResponse", "");
         System.out.print(stBa1.toString());
 
         //printf("%s", stBa1.toString());
 
-        /* ×ª»»Îªxml */
+        /* è½¬æ¢ä¸ºxml */
         stBa1.delete(0, stBa1.length());
         stMsgResponse.toXml(stBa1, "CsMsgResponse", "");
 
         System.out.print(stBa1.toString());
 
-        /* ÏûÏ¢±àÂë */
+        /* æ¶ˆæ¯ç¼–ç  */
         stBa1.delete(0, stBa1.length());
 
         ByteArray ba = new ByteArray();
         stMsgResponse.encode(ba, (short)1);
 
-        System.out.print(ByteArray.bytesToPrintable(ba.getAllocBytes(), 0, ba.length(), 16));
+        System.out.println(ByteArray.bytesToPrintable(ba.getAllocBytes(), 0, ba.length(), 16));
 
-        /* ½âÂëÏûÏ¢ */
+        /* è§£ç æ¶ˆæ¯ */
         CsMsgResponse stMsgResp = new CsMsgResponse();
         stMsgResp.decode(ba.getAllocBytes(), 0);
 
-        /* ¸ñÊ½»¯Êä³ö½âÂëºóµÄÏûÏ¢ */
+        /* æ ¼å¼åŒ–è¾“å‡ºè§£ç åçš„æ¶ˆæ¯ */
         stBa1.delete(0, stBa1.length());
         stMsgResp.format(stBa1, "CSMsgResponse", "");
 

@@ -23,7 +23,7 @@ public class PPArrayField<E extends PPField> implements PPField {
     /**
      * 构造函数
      */
-    public PPArrayField(PPFieldCreator fieldCreator) {
+    public PPArrayField(PPFieldCreator<E> fieldCreator) {
         this.mFieldCreator = fieldCreator;
     }
 

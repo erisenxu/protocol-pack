@@ -1,0 +1,1 @@
+java -classpath ./Classes com.itfriday.test.Test

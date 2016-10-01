@@ -1,0 +1,10 @@
+Classes/*
+*.o
+*.creator.user
+*.qbs.user
+*.a
+*.out
+*.pyc
+.DS_Store
+*.sdf
+*.suo

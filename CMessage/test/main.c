@@ -7,11 +7,14 @@
 
 int main()
 {
+    /* 对象结构体申明及赋值 */
     CSMSGRESPONSE stMsgResponse;
     stMsgResponse.shCmd = CS_MSG_GET_FRIEND_LIST;
     stMsgResponse.shEno = 0;
 
     stMsgResponse.stRespData.nSelector = CS_MSG_GET_FRIEND_LIST;
+
+    /* 数组字段 */
     stMsgResponse.stRespData.stGetFriends.bFriendNumber = 2;
 
     stMsgResponse.stRespData.stGetFriends.astFriendInfo[0].ullGID = 0x12345678l;
@@ -44,7 +47,7 @@ int main()
 
     printf("%s", stBa1.pszData);
 
-    /* 消息编码 */
+    /* 消息编码成二进制 */
     bytearray_clear(&stBa1);
     cs_msg_response_field_encode(&stMsgResponse, 1, &stBa1);
 
@@ -56,7 +59,7 @@ int main()
 
     printf("%s\n", stBuf2.pszData);
 
-    /* 解码消息 */
+    /* 将二进制数据解码为消息对象 */
     CSMSGRESPONSE stMsgResp;
     memset(&stMsgResp, sizeof(stMsgResp), 0);
     cs_msg_response_field_decode(&stMsgResp, stBa1.pszData, stBa1.dwLen);

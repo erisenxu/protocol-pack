@@ -7,13 +7,16 @@
 
 int main()
 {
+    /* 对象结构体申明及赋值 */
     CsMsgResponse stMsgResponse;
+
     stMsgResponse.setCmd(CS_MSG_GET_FRIEND_LIST);
     stMsgResponse.setEno(0);
 
     stMsgResponse.getRespData().setSelector(CS_MSG_GET_FRIEND_LIST);
-    stMsgResponse.getRespData().getGetFriends().setFriendNumber(2);
 
+    /* 数组字段 */
+    stMsgResponse.getRespData().getGetFriends().setFriendNumber(2);
     stMsgResponse.getRespData().getGetFriends().getFriendInfo(0).setGID(0x12345678l);
     stMsgResponse.getRespData().getGetFriends().getFriendInfo(0).setFriendName("ErisenXu");
     stMsgResponse.getRespData().getGetFriends().getFriendInfo(0).setFriendImage("http://www.qq.com/erisenxu.jpg");
@@ -40,7 +43,7 @@ int main()
 
     printf("%s", stBa1.toString());
 
-    /* 消息编码 */
+    /* 消息编码成二进制 */
     stBa1.clear();
     stMsgResponse.encode(stBa1, 1);
 
@@ -50,7 +53,7 @@ int main()
 
     printf("%s\n", stBuf2.toString());
 
-    /* 解码消息 */
+    /* 将二进制数据解码为消息对象 */
     CsMsgResponse stMsgResp;
     stMsgResp.decode(stBa1.getData(), stBa1.getLength());
 

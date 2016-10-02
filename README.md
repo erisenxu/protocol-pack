@@ -27,7 +27,7 @@ Protocol-Pack特点
 
 要使用PP，您只需要完成如下几步操作：<p>
 
-1. 采用XML定义数据结构或对象。您可以把数据结构定义在不同的文件中，数据结构或对象可以跨文件相互引用。您可以参考protocol-def目录中的例子<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>，<p>
+1. 采用XML定义数据结构或对象。您可以把数据结构定义在不同的文件中，数据结构或对象可以跨文件相互引用。您可以参考protocol-def目录中的例子<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>来编写结构定义文件。<p>
 2. 采用代码生成器生成指定语言的数据结构或对象。<p>
 3. 将生成的代码及基础代码添加到您的项目中。<p>
 4. 

@@ -40,9 +40,7 @@ Demo
 #include &lt;stdlib.h>
 #include &lt;string.h>
 #include &lt;stdio.h>
-
 #include "test/CsMsgResponse.h"
-
 int main()
 {
     /* 对象结构体申明及赋值 */

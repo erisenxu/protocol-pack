@@ -1,13 +1,13 @@
-Protocol-pack
+Protocol-Pack简介
 =============
 
-Protocol Pack is a way of encoding or decoding structured data, It's similar with Google Protocol Buffer. But easier to understand and use. And it produce code in C++, C...
+Protocol-Pack(以下简称PP)是和google的Protocol Buffer(简称PB)类似的一种二进制数据交换的格式。它采用TT(L)V（即Tag-Type-Length-Value）的格式对数据信息进行编码，具有向前、向后兼容的特性。PP提供了多种语言的实现：C、C++、Java、Object-C，每种实现都尽量追求极简的编码风格，简单、干净、容易理解。
 
-Why Use Protocol-pack but not Protocol Buffer?
+Protocol-Pack特点
 =============
-First, the Protocol Pack is easier to understand and use. The code it produces is very simple.<p>
-Second, the Protocol Pack supports c language, which is used in many game servers.<p>
-Third, the Protocol Pack supports Union structure, which uses less RAM, this make it more suitable to develop mobile applications.
+1. PP支持Union数据结构 <p>
+2. PP的每种语言的实现均提供encode、decode、format、toXml这4个函数，其中encode函数将Union或Struct数据结构编码为二进制数据(大端序/网络序)；decode函数将二进制数据解码为Union或Struct数据结构，format函数将数据结构编码为可读字符串，一般用于日志打印；toXml函数将数据结构编码为xml格式的字符串。<p>
+3. PP的C、C++实现，提供了读取xml的功能函数，不过读取xml配置文件的功能需要结合CXmlLoader和XmlLoader这两个项目。<p>
 
 Quick Example
 =============

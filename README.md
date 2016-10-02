@@ -36,6 +36,7 @@ Demo
 =============
 
 调用format函数，将结构体编码为可读字符串：<p>
+<pre>
 [CsMsgResponse]
     Eno = 0
     Cmd = 2
@@ -54,4 +55,4 @@ Demo
             Types = 3430008
             Types = 9004884
             Types = 2464388554683811993
-
+</pre>

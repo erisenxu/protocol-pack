@@ -27,25 +27,31 @@ Protocol-Pack特点
 
 要使用PP，您只需要完成如下几步操作：<p>
 
-1. 采用XML定义数据结构或对象。您可以把数据结构定义在不同的文件中，数据结构或对象可以跨文件相互引用。您可以参考protocol-def目录中的例子<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>来编写结构定义文件。<p>
-2. 采用代码生成器生成指定语言的数据结构或对象。<p>
-3. 将生成的代码及基础代码添加到您的项目中。<p>
-4. 
+1. 采用XML编写结构或对象描述文件，定义数据结构或对象。您可以把数据结构定义在不同的文件中。数据结构或对象可以跨文件相互引用，当您需要引用其他文件中定义的结构时，不需要显式引入其他文件。您可以参考protocol-def目录中的例子<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>来编写结构定义文件。<p>
+2. 采用代码生成器生成指定语言的数据结构或对象。代码生成器会为每个结构生成独立的文件。例如，假定您在描述文件中定义了一个名为Person的结构，且选择生成C语言代码，会生成Person.h和Person.c这两个文件。<p>
+3. 将生成的代码及其依赖的基础代码添加到您的项目中。例如，假定您的项目采用C语言，除了需要把步骤2中生成的代码添加到项目中，还需要把CMessage目录中的代码添加到项目中。<p>
+4. 代码生成器为每个结构体或对象均生成了encode、decode、format、toXml这4个函数，您可以调用encode函数结构或对象编码为二进制数据；调用decode函数将二进制数据解码为结构体或对象；当需要日志输出数据结构时，可以调用format函数，将数据结构编码为可读字符串；当需要将数据对象保存为xml文件时，可以调用toXml函数将数据编码为xml格式的字符串，再输出到文件。<p>
 
-Then you use protocol buffer generator, to produce code in C++, C, C# or Java.
+Demo
+=============
 
-If you are using C++, you will get the following C++ files: 
-  Person.h
-  Person.cpp
+调用format函数，将结构体编码为可读字符串：<p>
+[CsMsgResponse]
+    Eno = 0
+    Cmd = 2
+    [RespData]
+        [GetFriends]
+            FriendNumber = 2
+            [FriendInfo]
+                GID = 305419896
+                FriendName = ErisenXu
+                FriendImage = http://www.qq.com/erisenxu.jpg
+            [FriendInfo]
+                GID = 2018915346
+                FriendName = xy
+                FriendImage = http://www.qq.com/xy.jpg
+            TypeNumber = 3
+            Types = 3430008
+            Types = 9004884
+            Types = 2464388554683811993
 
-Or if you are using c, you will get the following c files:
-  Person.h
-  Person.c
-
-Or if you are using Java, you will get the following Java file:
-  Person.java
-
-Then you add these files to your application, and compile them with your application.
-
-For a more complete example, see the tutorials.
-</pre>

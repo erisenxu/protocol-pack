@@ -2,72 +2,72 @@
 
 <field-config version="1">
 
-	<!-- 客户端消息类型 -->
-	<enum name="CS_MSG_TYPE_"  desc="客户端消息类型" >
-		<macro name="CS_MSG_LOGIN"								value="1"		desc="登录" />
-		<macro name="CS_MSG_GET_FRIEND_LIST"					value="2"		desc="获取好友列表" />
-	</enum>
+    <!-- 客户端消息类型 -->
+    <enum name="CS_MSG_TYPE_"  desc="客户端消息类型" >
+        <macro name="CS_MSG_LOGIN"                              value="1"        desc="登录" />
+        <macro name="CS_MSG_GET_FRIEND_LIST"                    value="2"        desc="获取好友列表" />
+    </enum>
 
-	<!-- 宏定义 -->
-	<macro name="MAX_CODE_LEN"			value='64'			desc='鉴权码最大长度' />
-	<macro name="MAX_NAME_LEN"			value='64'			desc='最大名字长度' />
-	<macro name="MAX_URL_LEN"			value='256'			desc='最大URL地址长度' />
-	<macro name="MAX_FRIEND_NUMBER"		value='200'			desc='最大好友数量' />
-	<macro name="MAX_TYPE_NUMBER"		value='40'			desc='最大类型数量' />
+    <!-- 宏定义 -->
+    <macro name="MAX_CODE_LEN"           value='64'            desc='鉴权码最大长度' />
+    <macro name="MAX_NAME_LEN"           value='64'            desc='最大名字长度' />
+    <macro name="MAX_URL_LEN"            value='256'           desc='最大URL地址长度' />
+    <macro name="MAX_FRIEND_NUMBER"      value='200'           desc='最大好友数量' />
+    <macro name="MAX_TYPE_NUMBER"        value='40'            desc='最大类型数量' />
 
-	<!-- 登录请求 -->
-	<struct name="LoginRequest"	desc="登录请求">
-		<field	name="Code"			type="string"		tag="1"			count="MAX_CODE_LEN"			desc="登录鉴权码" />
-		<field	name="OsType"		type="int"			tag="2"			default="0"						desc="系统类型：0 - iOS，1 - Android" />
-	</struct>
+    <!-- 登录请求 -->
+    <struct name="LoginRequest"    desc="登录请求">
+        <field    name="Code"          type="string"        tag="1"            count="MAX_CODE_LEN"            desc="登录鉴权码" />
+        <field    name="OsType"        type="int"           tag="2"            default="0"                     desc="系统类型：0 - iOS，1 - Android" />
+    </struct>
 
-	<!-- 登录响应 -->
-	<struct name="LoginResponse"	desc="登录响应">
-		<field	name="GID"			type="ulong"		tag="1"											desc="玩家GID" />
-		<field	name="UserType"		type="char"			tag="2"			default="0"						desc="用户VIP类型" />
-		<field	name="UserName"		type="string"		tag="3"			count="MAX_NAME_LEN"			desc="用户名称" />
-		<field	name="UserImage"	type="string"		tag="4"			count="MAX_URL_LEN"				desc="用户头像URL地址" />
-	</struct>
+    <!-- 登录响应 -->
+    <struct name="LoginResponse"    desc="登录响应">
+        <field    name="GID"            type="ulong"         tag="1"                                            desc="玩家GID" />
+        <field    name="UserType"       type="char"          tag="2"            default="0"                     desc="用户VIP类型" />
+        <field    name="UserName"       type="string"        tag="3"            count="MAX_NAME_LEN"            desc="用户名称" />
+        <field    name="UserImage"      type="string"        tag="4"            count="MAX_URL_LEN"             desc="用户头像URL地址" />
+    </struct>
 
-	<!-- 好友信息 -->
-	<struct name='FriendInfo' desc='好友信息'>
-		<field	name="GID"			type="ulong"		tag="1"											desc="好友GID" />
-		<field	name="FriendName"	type="string"		tag="3"			count="MAX_NAME_LEN"			desc="好友名称" />
-		<field	name="FriendImage"	type="string"		tag="4"			count="MAX_URL_LEN"				desc="好友头像URL地址" />
-	</struct>
+    <!-- 好友信息 -->
+    <struct name='FriendInfo' desc='好友信息'>
+        <field    name="GID"            type="ulong"         tag="1"                                            desc="好友GID" />
+        <field    name="FriendName"     type="string"        tag="3"            count="MAX_NAME_LEN"            desc="好友名称" />
+        <field    name="FriendImage"    type="string"        tag="4"            count="MAX_URL_LEN"             desc="好友头像URL地址" />
+    </struct>
 
-	<!-- 好友列表 -->
-	<struct name='FriendInfoList' desc='Just a Test Message object'>
-		<field	name="FriendNumber"	type="uchar"		tag='1'			default="0"						desc="好友数量" />
-		<field	name="FriendInfo"	type="array"		tag="2"			subtype='FriendInfo'			count='MAX_FRIEND_NUMBER'	refer='FriendNumber'	desc="好友列表" />
-		<field	name="TypeNumber"	type="uchar"		tag='3'			default="0"						desc="类型数量" />
-		<field	name="Types"		type="array"		tag="4"			subtype='ulong'					count='MAX_TYPE_NUMBER'		refer='TypeNumber'	desc="类型列表" />
-	</struct>
+    <!-- 好友列表 -->
+    <struct name='FriendInfoList' desc='Just a Test Message object'>
+        <field    name="FriendNumber"    type="uchar"        tag='1'            default="0"                        desc="好友数量" />
+        <field    name="FriendInfo"      type="array"        tag="2"            subtype='FriendInfo'               count='MAX_FRIEND_NUMBER'      refer='FriendNumber'    desc="好友列表" />
+        <field    name="TypeNumber"      type="uchar"        tag='3'            default="0"                        desc="类型数量" />
+        <field    name="Types"           type="array"        tag="4"            subtype='ulong'                    count='MAX_TYPE_NUMBER'        refer='TypeNumber'      desc="类型列表" />
+    </struct>
 
-	<!-- 客户端请求协议消息结构体 -->
-	<union name='CsRequestData' desc='客户端响应协议消息结构体'>
-		<field	name="Login"		type="LoginRequest"			tag='CS_MSG_LOGIN'					desc='客户端登录请求' />
-		<field	name="GetFriends"	type="char"					tag='CS_MSG_GET_FRIEND_LIST'		desc='获取好友列表请求' />
-	</union>
+    <!-- 客户端请求协议消息结构体 -->
+    <union name='CsRequestData' desc='客户端响应协议消息结构体'>
+        <field    name="Login"         type="LoginRequest"            tag='CS_MSG_LOGIN'                    desc='客户端登录请求' />
+        <field    name="GetFriends"    type="char"                    tag='CS_MSG_GET_FRIEND_LIST'          desc='获取好友列表请求' />
+    </union>
 
-	<!-- 客户端响应协议消息结构体 -->
-	<union name='CsResponseData' desc='客户端响应协议消息结构体'>
-		<field	name="Login"		type="LoginResponse"		tag='CS_MSG_LOGIN'					desc='登录响应' />
-		<field	name="GetFriends"	type="FriendInfoList"		tag='CS_MSG_GET_FRIEND_LIST'		desc='获取好友列表响应' />
-	</union>
+    <!-- 客户端响应协议消息结构体 -->
+    <union name='CsResponseData' desc='客户端响应协议消息结构体'>
+        <field    name="Login"         type="LoginResponse"         tag='CS_MSG_LOGIN'                    desc='登录响应' />
+        <field    name="GetFriends"    type="FriendInfoList"        tag='CS_MSG_GET_FRIEND_LIST'          desc='获取好友列表响应' />
+    </union>
 
-	<!-- 客户端请求协议 -->
-	<struct name="CsMsgRequest"	version="1"		desc="客户端请求协议" >
-		<field name="GID"			type="ulong"			tag="1"		desc="玩家GID" />
-		<field name="Cmd"			type="short"			tag="2"		desc="消息命令字" />
-		<field name="ReqData"		type="CsRequestData"	tag="3"		desc="消息结构体"	select="Cmd"/>
-	</struct>
+    <!-- 客户端请求协议 -->
+    <struct name="CsMsgRequest"    version="1"        desc="客户端请求协议" >
+        <field name="GID"            type="ulong"            tag="1"        desc="玩家GID" />
+        <field name="Cmd"            type="short"            tag="2"        desc="消息命令字" />
+        <field name="ReqData"        type="CsRequestData"    tag="3"        desc="消息结构体"    select="Cmd"/>
+    </struct>
 
-	<!-- 客户端响应协议 -->
-	<struct name="CsMsgResponse"	version="1"		desc="客户端响应协议" >
-		<field name="Eno"			type="short"			tag="1"		desc="响应码" />
-		<field name="Cmd"			type="short"			tag="2"		desc="命令字" />
-		<field name="RespData"		type="CsResponseData"	tag="3"		desc="消息结构体"	select="Cmd" />
-	</struct>
+    <!-- 客户端响应协议 -->
+    <struct name="CsMsgResponse"    version="1"        desc="客户端响应协议" >
+        <field name="Eno"            type="short"             tag="1"        desc="响应码" />
+        <field name="Cmd"            type="short"             tag="2"        desc="命令字" />
+        <field name="RespData"       type="CsResponseData"    tag="3"        desc="消息结构体"    select="Cmd" />
+    </struct>
 
 </field-config>

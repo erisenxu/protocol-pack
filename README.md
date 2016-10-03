@@ -35,11 +35,96 @@ Protocol-Pack特点
 Demo
 =============
 
-1. 每种语言都提供了例子，放在语言对应的test目录下。其中：
-    <a href='https://github.com/itfriday/protocol-pack/blob/master/CMessage/test/main.c'>CMessage/test/main.c</a>，C语言例子程序
-    <a href='https://github.com/itfriday/protocol-pack/blob/master/JMessage/com/itfriday/test/Test.java'>JMessage/com/itfriday/test/Test.java</a>，Java语言例子程序
-    <a href='https://github.com/itfriday/protocol-pack/blob/master/Message/test/main.cpp'>Message/test/main.cpp</a>，C++语言例子程序
+1. 每种语言都提供了例子，放在语言对应的test目录下。其中：<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://github.com/itfriday/protocol-pack/blob/master/CMessage/test/main.c'>CMessage/test/main.c</a>，C语言例子程序<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://github.com/itfriday/protocol-pack/blob/master/JMessage/com/itfriday/test/Test.java'>JMessage/com/itfriday/test/Test.java</a>，Java语言例子程序<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href='https://github.com/itfriday/protocol-pack/blob/master/Message/test/main.cpp'>Message/test/main.cpp</a>，C++语言例子程序<p>
 
 2. 要运行Demo程序，您必须先执行目录下的gen.bat(Windows下)或gen.sh(Linux下)程序生成相应的代码。gen.bat/gen.sh程序会调用PP代码生成器将protocol-def目录下定义的<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>转变为结构或对象。<p>
 
-3. 接着，您需要将生成的代码编译为可执行程序，然后执行。例如，如果是C或C++语言，您可以在Linux下，在test目录执行Make命令，即可编译出Message可执行程序。
+3. 接着，您需要将生成的代码编译为可执行程序，然后执行。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;针对C语言，在Linux下，您可以切换到CMessage/test目录，执行Make命令，即可编译出名为Message的可执行程序。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;针对C++语言，在Linux下，您可以切换到Message/test目录，执行Make命令，即可编译出名为Message的可执行程序。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;针对Java语言，您可以切换到JMessage目录，执行build命令，可以执行编译。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;针对Object-C语言，您可以切换到OCMessage目录，使用XCode打开项目，编译、运行。<p>
+
+4. 例子程序执行后的输出见下图：<p>
+<pre>
+// 将结构体编码为可读形式的输出
+[CsMsgResponse]
+    Eno = 0
+    Cmd = 2
+    [RespData]
+        [GetFriends]
+            FriendNumber = 2
+            [FriendInfo]
+                GID = 305419896
+                FriendName = ErisenXu
+                FriendImage = http://www.qq.com/erisenxu.jpg
+            [FriendInfo]
+                GID = 2018915346
+                FriendName = xy
+                FriendImage = http://www.qq.com/xy.jpg
+            TypeNumber = 3
+            Types = 3430008
+            Types = 9004884
+            Types = 2464388554683811993
+// 将结构体编码为XML形式的输出
+<CsMsgResponse>
+    <Eno>0</Eno>
+    <Cmd>2</Cmd>
+    <RespData>
+        <GetFriends>
+            <FriendNumber>2</FriendNumber>
+            <FriendInfo>
+                <GID>305419896</GID>
+                <FriendName>ErisenXu</FriendName>
+                <FriendImage>http://www.qq.com/erisenxu.jpg</FriendImage>
+            </FriendInfo>
+            <FriendInfo>
+                <GID>2018915346</GID>
+                <FriendName>xy</FriendName>
+                <FriendImage>http://www.qq.com/xy.jpg</FriendImage>
+            </FriendInfo>
+            <TypeNumber>3</TypeNumber>
+            <Types>3430008</Types>
+            <Types>9004884</Types>
+            <Types>2464388554683811993</Types>
+        </GetFriends>
+    </RespData>
+</CsMsgResponse>
+// 将结构体编码为二进制流形式的输出
+0000   00 01 0b 00 00 00 d3 00  01 03 00 00 00 02 03 00   ........ ........
+0010   02 00 03 0b 00 00 00 c2  00 02 0b 00 00 00 bb 00   ........ ........
+0020   01 02 02 00 02 0c 00 00  00 82 00 02 00 02 0b 00   ........ ........
+0030   00 00 3f 00 01 08 00 00  00 00 12 34 56 78 00 03   ..?..... ...4Vx..
+0040   09 00 00 00 08 45 72 69  73 65 6e 58 75 00 04 09   .....Eri senXu...
+0050   00 00 00 1e 68 74 74 70  3a 2f 2f 77 77 77 2e 71   ....http ://www.q
+0060   71 2e 63 6f 6d 2f 65 72  69 73 65 6e 78 75 2e 6a   q.com/er isenxu.j
+0070   70 67 00 02 0b 00 00 00  33 00 01 08 00 00 00 00   pg...... 3.......
+0080   78 56 34 12 00 03 09 00  00 00 02 78 79 00 04 09   xV4..... ...xy...
+0090   00 00 00 18 68 74 74 70  3a 2f 2f 77 77 77 2e 71   ....http ://www.q
+00a0   71 2e 63 6f 6d 2f 78 79  2e 6a 70 67 00 03 02 03   q.com/xy .jpg....
+00b0   00 04 0c 00 00 00 23 00  03 00 04 08 00 00 00 00   ......#. ........
+00c0   00 34 56 78 00 04 08 00  00 00 00 00 89 67 54 00   .4Vx.... .....gT.
+00d0   04 08 22 33 44 55 66 77  88 99                     .."3DUfw ..
+// 解码为结构体后，将结构体输出为可读形式
+[CSMsgResponse]
+    Eno = 0
+    Cmd = 2
+    [RespData]
+        [GetFriends]
+            FriendNumber = 2
+            [FriendInfo]
+                GID = 305419896
+                FriendName = ErisenXu
+                FriendImage = http://www.qq.com/erisenxu.jpg
+            [FriendInfo]
+                GID = 2018915346
+                FriendName = xy
+                FriendImage = http://www.qq.com/xy.jpg
+            TypeNumber = 3
+            Types = 3430008
+            Types = 9004884
+            Types = 2464388554683811993
+</pre>

@@ -242,6 +242,53 @@ field子节点包含如下属性：<br>
         <td>否</td>
     </tr>
 </table>
+一个结构体的例子如下：<br>
+<pre>
+    &lt;struct name='FriendInfo' desc='好友信息'>
+        &lt;field    name="GID"            type="ulong"         tag="1"                                            desc="好友GID" />
+        &lt;field    name="FriendName"     type="string"        tag="3"            count="MAX_NAME_LEN"            desc="好友名称" />
+        &lt;field    name="FriendImage"    type="string"        tag="4"            count="MAX_URL_LEN"             desc="好友头像URL地址" />
+    &lt;/struct>
+</pre>
+它定义了一个名为FriendInfo的结构体，包含GID、FriendName、FriendImage这3个子字段，类型分别是ulong，string和string，其中FriendName的最大长度是MAX_NAME_LEN，FriendImage的最大长度是MAX_URL_LEN。MAX_NAME_LEN和MAX_URL_LEN是用macro定义的宏。如果是C语言，FriendInfo将被代码生成器转变为C语言的结构体：<br>
+<pre>
+/**
+ * 好友信息
+ */
+struct tagFriendInfo
+{
+    U64 ullGID;                      /* 好友GID */
+    char szFriendName[MAX_NAME_LEN]; /* 好友名称 */
+    char szFriendImage[MAX_URL_LEN]; /* 好友头像URL地址 */
+};
+typedef struct tagFriendInfo  FRIENDINFO;
+typedef struct tagFriendInfo* LPFRIENDINFO;
+</pre>
+因此，当一个结构体被定义后，它将成为一个新的类型，可以被其他结构体引用。使用type或subtype即可以引用它，例子如下：<br>
+<pre>
+    &lt;struct name='FriendInfoList' desc='Just a Test Message object'>
+        &lt;field    name="FriendNumber"    type="uchar"        tag='1'            default="0"                        desc="好友数量" />
+        &lt;field    name="FriendInfo"      type="array"        tag="2"            subtype='FriendInfo'               count='MAX_FRIEND_NUMBER'      refer='FriendNumber'    desc="好友列表" />
+        &lt;field    name="TypeNumber"      type="uchar"        tag='3'            default="0"                        desc="类型数量" />
+        &lt;field    name="Types"           type="array"        tag="4"            subtype='ulong'                    count='MAX_TYPE_NUMBER'        refer='TypeNumber'      desc="类型列表" />
+    &lt;/struct>
+</pre>
+这个例子定义了一个名为FriendInfoList的结构，它的子字段FriendInfo是一个数组，数组元素类型是FriendInfo，数组的最大元素数量由MAX_FRIEND_NUMBER指定，数组的有效元素数量由字段FriendNumber决定。如果是C语言，FriendInfoList将被代码生成器转变为C语言的结构体如下：<br>
+<pre>
+/**
+ * Just a Test Message object
+ */
+struct tagFriendInfoList
+{
+    U8 bFriendNumber;                            /* 好友数量 */
+    FRIENDINFO astFriendInfo[MAX_FRIEND_NUMBER]; /* 好友列表 */
+    U8 bTypeNumber;                              /* 类型数量 */
+    U64 astTypes[MAX_TYPE_NUMBER];               /* 类型列表 */
+};
+
+typedef struct tagFriendInfoList  FRIENDINFOLIST;
+typedef struct tagFriendInfoList* LPFRIENDINFOLIST;
+</pre>
 
 代码生成器使用说明
 =============

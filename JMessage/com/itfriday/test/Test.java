@@ -69,7 +69,7 @@ public class Test {
         /* 消息编码 */
         stBa1.delete(0, stBa1.length());
 
-        ByteArray ba = new ByteArray();
+        ByteArray ba = new ByteArray(1024);
         stMsgResponse.encode(ba, (short)1);
 
         System.out.println(ByteArray.bytesToPrintable(ba.getAllocBytes(), 0, ba.length(), 16));

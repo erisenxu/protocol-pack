@@ -30,7 +30,7 @@ int main()
     stMsgResponse.getRespData().getGetFriends().setTypes(1, 0x896754);
     stMsgResponse.getRespData().getGetFriends().setTypes(2, 0x2233445566778899l);
 
-    MByteArray stBa1;
+    MByteArray stBa1(1024);
 
     /* 格式化 */
     stMsgResponse.format(stBa1, "CsMsgResponse", "");
@@ -47,7 +47,7 @@ int main()
     stBa1.clear();
     stMsgResponse.encode(stBa1, 1);
 
-    MByteArray stBuf2;
+    MByteArray stBuf2(1024);
 
     MByteArray::bytesToPrintable(stBuf2, stBa1.getData(), stBa1.getLength(), 0, -1, 16);
 

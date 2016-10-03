@@ -339,6 +339,31 @@ typedef struct tagCsMsgRequest* LPCSMSGREQUEST;
 
 代码生成器使用说明
 =============
+代码生成器位于CMessage-Creator目录，它是python编写的工具，不需要编译可以跨平台使用。它需要python2.4以上的环境。<p>
+
+代码生成器的主程序是generator.py，执行python generator.py --help可以查看帮助。<p>
+<pre>
+Description: message generator.
+Version: 1.0.0.0
+Usage: python generator.py [-?] [-h] [-s DIRECTORY] [-d DIRECTORY]
+                           [-l {c, cpp, java, oc}] [-m FILE_NAME] [-p PACKAGE_NAME]
+optional arguments:
+  -?, -h, --help	Show this help information
+  -s DIRECTORY, --srcpath DIRECTORY
+			Set protocol define file search directory
+  -l {c, cpp, java, oc}, --language {c, cpp, java, oc}	
+			Major programming language you want to use, should be
+			[c|cpp|java|oc]
+  -d DIRECTORY, --directory DIRECTORY
+			Set generate project directory for project
+  -m FILE_NAME
+			Set generate macro file name
+  -p PACKAGE_NAME
+			Set package for java
+Example:
+  python generator.py --help
+  python generator.py -s . -d ../test -l c -m StarMacro
+</pre>
 
 编码规则详解
 =============

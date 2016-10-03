@@ -1,0 +1,23 @@
+
+Description: message generator.
+Version: 1.0.0.0
+Usage: python generator.py [-?] [-h] [-s DIRECTORY] [-d DIRECTORY]
+                           [-l {c, cpp, java, oc}] [-m FILE_NAME] [-p PACKAGE_NAME]
+
+optional arguments:
+  -?, -h, --help	Show this help information
+  -s DIRECTORY, --srcpath DIRECTORY
+			Set protocol define file search directory
+  -l {c, cpp, java, oc}, --language {c, cpp, java, oc}	
+			Major programming language you want to use, should be
+			[c|cpp|java|oc]
+  -d DIRECTORY, --directory DIRECTORY
+			Set generate project directory for project
+  -m FILE_NAME
+			Set generate macro file name
+  -p PACKAGE_NAME
+			Set package for java
+
+Example:
+  python generator.py --help
+  python generator.py -s . -d ../test -l c -m StarMacro

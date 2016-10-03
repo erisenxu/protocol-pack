@@ -171,7 +171,6 @@ Demo
 描述文件采用标准的XML编写，必须包含一个名为field-config的根节点。文件中定义的其他宏、结构体、枚举类型，都是field-config的子节点。
 <pre>
 &lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-
 &lt;field-config version="1">
     &lt;!-- 在这里定义宏、枚举、结构体 等-->
     ......

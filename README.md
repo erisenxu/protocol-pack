@@ -44,8 +44,8 @@ Protocol-Pack特点
 </pre>
 注意：C、C++及Java语言，都提供了一个名为ByteArray的字节数组，它是一个辅组类，负责处理二进制数据，包括编码、解码等辅组功能。对C语言，字节数组的初始化语句如下：<br>
 <pre>
-    char szMsg1[1024];
-    BYTEARRAY stBa;
+    char szMsg1[1024]; // 定义字节数组的大小，注意C语言的字节数组不会自动扩展大小，您必须在初始化时为数组分配足够的大小
+    BYTEARRAY stBa; // 定义字节数组
     INIT_BYTE_ARRAY(stBa, szMsg1, sizeof(szMsg1));
 </pre>
 C++语言的字节数组初始化语句如下：<br>

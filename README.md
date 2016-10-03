@@ -209,8 +209,38 @@ field子节点包含如下属性：<br>
     </tr>
     <tr>
         <td>type</td>
-        <td>子元素类型，</td>
+        <td>子元素类型，可取值为：uchar、char、ushort、short、uint、int、ulong、long、string、bytes、array、其他用struct或union定义的结构</td>
         <td>是</td>
+    </tr>
+    <tr>
+        <td>tag</td>
+        <td>子元素的标签</td>
+        <td>是</td>
+    </tr>
+    <tr>
+        <td>subtype</td>
+        <td>子元素类型，可取值为：uchar、char、ushort、short、uint、int、ulong、long、其他用struct或union定义的结构</td>
+        <td>当type=array，表示子字段为数组时，必须指定subtype；当type!=array时，不必指定subtype</td>
+    </tr>
+    <tr>
+        <td>count</td>
+        <td>用来指定字符串或数组元素的最大数量</td>
+        <td>当type=array或type=string或type=bytes时，必须指定count；当type!=array且type!=string且type!=bytes时，不必指定count</td>
+    </tr>
+    <tr>
+        <td>refer</td>
+        <td>数组元素数量，取值必须是结构体中定义的一个整形元素</td>
+        <td>当type=array或type=bytes时，必须指定refer；当type!=array且type!=bytes时，不必指定refer</td>
+    </tr>
+    <tr>
+        <td>select</td>
+        <td>union元素选择器，取值必须是结构体中定义的一个整形元素</td>
+        <td>当type是一个union类型的结构体时，必须指定select</td>
+    </tr>
+    <tr>
+        <td>desc</td>
+        <td>子元素的描述</td>
+        <td>否</td>
     </tr>
 </table>
 

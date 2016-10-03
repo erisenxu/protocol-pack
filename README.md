@@ -261,7 +261,7 @@ struct tagFriendInfo
 typedef struct tagFriendInfo  FRIENDINFO;
 typedef struct tagFriendInfo* LPFRIENDINFO;
 </pre>
-因此，当一个结构体被定义后，它将成为一个新的类型，可以被其他结构体引用。使用type或subtype即可以引用它，例子如下：<br>
+当一个结构体被定义后，它将成为一个新的类型，可以被其他结构体引用。使用type或subtype即可以引用它，例子如下：<br>
 <pre>
     &lt;struct name='FriendInfoList' desc='Just a Test Message object'>
         &lt;field    name="FriendNumber"    type="uchar"        tag='1'            default="0"                        desc="好友数量" />
@@ -270,7 +270,7 @@ typedef struct tagFriendInfo* LPFRIENDINFO;
         &lt;field    name="Types"           type="array"        tag="4"            subtype='ulong'                    count='MAX_TYPE_NUMBER'        refer='TypeNumber'      desc="类型列表" />
     &lt;/struct>
 </pre>
-这个例子定义了一个名为FriendInfoList的结构，它的子字段FriendInfo是一个数组，数组元素类型是FriendInfo，数组的最大元素数量由MAX_FRIEND_NUMBER指定，数组的有效元素数量由字段FriendNumber决定。如果是C语言，FriendInfoList将被代码生成器转变为C语言的结构体如下：<br>
+这个例子定义了一个名为FriendInfoList的结构，它的子字段FriendInfo是一个数组，数组元素类型是FriendInfo，数组的最大元素数量由MAX_FRIEND_NUMBER指定，数组的有效元素数量由字段FriendNumber决定(注意这里的refer，它指定了数组FriendInfo的有效元素数量，由字段FriendNumber决定)。如果是C语言，FriendInfoList将被代码生成器转变为C语言的结构体如下：<br>
 <pre>
 struct tagFriendInfoList
 {
@@ -279,10 +279,63 @@ struct tagFriendInfoList
     U8 bTypeNumber;                              // 类型数量
     U64 astTypes[MAX_TYPE_NUMBER];               // 类型列表
 };
-
 typedef struct tagFriendInfoList  FRIENDINFOLIST;
 typedef struct tagFriendInfoList* LPFRIENDINFOLIST;
 </pre>
+
+4. 如何定义Union联合<p>
+定义联合和定义结构体的语法类似，只是联合采用union来定义，name属性指定联合名称，desc属性指定联合描述，field子节点定义联合包含的子元素。union可以包含一个或多个field子节点。field子节点包含属性和struct节点的field子节点包含的属性一样，见上表。<br>
+
+一个联合的例子如下：<br>
+<pre>
+    &lt;union name='CsRequestData' desc='客户端响应协议消息结构体'>
+        &lt;field    name="Login"         type="LoginRequest"            tag='CS_MSG_LOGIN'                    desc='客户端登录请求' />
+        &lt;field    name="GetFriends"    type="char"                    tag='CS_MSG_GET_FRIEND_LIST'          desc='获取好友列表请求' />
+    &lt;/union>
+</pre>
+若转变为C语言，对应的代码如下：<br>
+<pre>
+struct tagCsRequestData
+{
+    U16 nSelector;  // 联合的选择器，由代码生成器自动添加。
+    union
+    {
+        LOGINREQUEST stLogin; // 客户端登录请求
+        S8 chGetFriends;     // 获取好友列表请求
+    };
+};
+typedef struct tagCsRequestData  CSREQUESTDATA;
+typedef struct tagCsRequestData* LPCSREQUESTDATA;
+</pre>
+这里，联合的选择器是由代码生成器自动添加的，当它值与联合中的某个字段的tag相同时，联合将用于保存该字段的值。即：<br>
+<pre>
+if (nSelector == CS_MSG_LOGIN) {
+    // tagCsRequestData代表了stLogin
+} else if (nSelector == CS_MSG_GET_FRIEND_LIST) {
+    // tagCsRequestData代表了chGetFriends
+}
+</pre>
+
+和struct结构体类似，当一个联合被定义后，它将成为一个新的类型，可以被其他结构体引用。使用type或subtype即可以引用它，但是必须为它指定select属性，例子如下：<br>
+<pre>
+    &lt;struct name="CsMsgRequest"    version="1"        desc="客户端请求协议" >
+        &lt;field name="GID"            type="ulong"            tag="1"        desc="玩家GID" />
+        &lt;field name="Cmd"            type="short"            tag="2"        desc="消息命令字" />
+        &lt;field name="ReqData"        type="CsRequestData"    tag="3"        desc="消息结构体"    select="Cmd"/>
+    &lt;/struct>
+</pre>
+对应的C语言如下:<br>
+<pre>
+struct tagCsMsgRequest
+{
+    U64 ullGID;              // 玩家GID
+    S16 shCmd;               // 消息命令字
+    CSREQUESTDATA stReqData; // 消息结构体
+};
+typedef struct tagCsMsgRequest  CSMSGREQUEST;
+typedef struct tagCsMsgRequest* LPCSMSGREQUEST;
+</pre>
+这个例子定义了一个CsMsgReuqest结构，它的子字段ReqData的类型是CsRequestData，它是一个联合，它的选择器由select指定为Cmd，因此当Cmd==CS_MSG_LOGIN时，ReqData将代表stLogin字段，当Cmd==CS_MSG_GET_FRIEND_LIST时，ReqData将代表chGetFriends字段。
 
 代码生成器使用说明
 =============

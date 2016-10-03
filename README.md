@@ -27,9 +27,9 @@ Protocol-Pack特点
 
 要使用PP，您只需要完成如下几步操作：<p>
 
-1. <strong>采用XML编写结构或对象描述文件(或称为<i>接口描述文件</i>)，定义数据结构或对象</strong>。您可以把数据结构定义在不同的文件中。数据结构或对象可以跨文件相互引用，当您需要引用其他文件中定义的结构时，不需要显式引入其他文件。您可以参考protocol-def目录中的例子<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>来编写结构定义文件。<p>
+1. <strong>采用XML编写结构或对象描述文件(或称为接口描述文件)，定义数据结构或对象</strong>。您可以把数据结构定义在不同的文件中。数据结构或对象可以跨文件相互引用，当您需要引用其他文件中定义的结构时，不需要显式引入其他文件。您可以参考protocol-def目录中的例子<a href='https://github.com/itfriday/protocol-pack/blob/master/protocol-def/msg.xml'>msg.xml</a>来编写结构定义文件。<p>
 2. <strong>采用代码生成器生成指定语言的数据结构或对象</strong>。代码生成器会为每个结构生成独立的文件。例如，假定您在描述文件中定义了一个名为Person的结构，且选择生成C语言代码，会生成Person.h和Person.c这两个文件。<p>
-3. 将生成的代码及其依赖的基础代码添加到您的项目中。例如，假定您的项目采用C语言，除了需要把步骤2中生成的代码添加到项目中，还需要把CMessage目录中的代码添加到项目中。<p>
+3. <strong>将生成的代码及其依赖的基础代码添加到您的项目中</strong>。例如，假定您的项目采用C语言，除了需要把步骤2中生成的代码添加到项目中，还需要把CMessage目录中的代码添加到项目中。<p>
 4. 代码生成器为每个结构体或对象均生成了encode、decode、format、toXml这4个函数(c语言的函数名会加上结构体名，例如结构体名若为Person，则这4个函数分别为person_field_encode、person_field_decode、person_field_format、person_field_to_xml)，您可以调用encode函数结构或对象编码为二进制数据；调用decode函数将二进制数据解码为结构体或对象；当需要日志输出数据结构时，可以调用format函数，将数据结构编码为可读字符串；当需要将数据对象保存为xml文件时，可以调用toXml函数将数据编码为xml格式的字符串，再输出到文件。<br>
 &nbsp;&nbsp;&nbsp;例如，在C语言下，将结构体Person编码为二进制数据的语句如下：<br>
 <pre>
@@ -163,4 +163,12 @@ Demo
 </pre>
 
 接口描述文件
+=============
+
+要使用PP，最重要的就是采用XML定义结构或对象描述文件，或者称为接口描述文件。本章将详细介绍如何定义一个接口貌似文件。<p>
+
+代码生成器使用说明
+=============
+
+编码规则详解
 =============

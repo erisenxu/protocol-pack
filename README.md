@@ -167,6 +167,53 @@ Demo
 
 要使用PP，最重要的就是采用XML定义结构或对象描述文件，或者称为接口描述文件。本章将详细介绍如何定义一个接口描述文件。<p>
 
+1. 描述文件基本结构。<p>
+描述文件采用标准的XML编写，必须包含一个名为field-config的根节点。文件中定义的其他宏、结构体、枚举类型，都是field-config的子节点。
+<pre>
+&lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+&lt;field-config version="1">
+    &lt;!-- 在这里定义宏、枚举、结构体 等-->
+    ......
+&lt;/field-config>
+</pre>
+
+2. 如何定义宏 <p>
+采用macro定义宏。暂时只支持定义整数类型的宏。name属性指定宏的名字，value指定宏的值，desc指定宏的描述：<br>
+<pre>
+&lt;macro name="MAX_URL_LEN"            value='256'           desc='最大URL地址长度' />
+</pre>
+
+3. 如何定义枚举类型 <p>
+采用enum定义枚举。name属性指定枚举名字，desc属性指定枚举的描述，macro子节点定义枚举包含的元素。enum可以包含一个或多个macro子节点：<br>
+<pre>
+&lt;enum name="CS_MSG_TYPE_"  desc="客户端消息类型" >
+    &lt;macro name="CS_MSG_LOGIN"                              value="1"        desc="登录" />
+    &lt;macro name="CS_MSG_GET_FRIEND_LIST"                    value="2"        desc="获取好友列表" />
+&lt;/enum>
+</pre>
+
+4. 如何定义Struct结构<p>
+采用struct定义一个结构体。name属性指定结构名称，desc属性指定结构描述，field子节点定义结构包含的子元素。struct可以包含一个或多个field子节点。<br>
+field子节点包含如下属性：<br>
+<table width='100%'>
+    <tr>
+        <td>属性名</td>
+        <td>属性说明</td>
+        <td>是否必须指定</td>
+    </tr>
+    <tr>
+        <td>name</td>
+        <td>子元素名</td>
+        <td>是</td>
+    </tr>
+    <tr>
+        <td>type</td>
+        <td>子元素类型，</td>
+        <td>是</td>
+    </tr>
+</table>
+
 代码生成器使用说明
 =============
 

@@ -228,7 +228,7 @@ field子节点包含如下属性：<br>
     </tr>
     <tr>
         <td>refer</td>
-        <td>数组元素数量，取值必须是结构体中定义的一个整形元素</td>
+        <td>数组有效元素数量，取值必须是结构体中定义的一个整形元素</td>
         <td>当type=array或type=bytes时，必须指定refer</td>
     </tr>
     <tr>
@@ -252,14 +252,11 @@ field子节点包含如下属性：<br>
 </pre>
 它定义了一个名为FriendInfo的结构体，包含GID、FriendName、FriendImage这3个子字段，类型分别是ulong，string和string，其中FriendName的最大长度是MAX_NAME_LEN，FriendImage的最大长度是MAX_URL_LEN。MAX_NAME_LEN和MAX_URL_LEN是用macro定义的宏。如果是C语言，FriendInfo将被代码生成器转变为C语言的结构体：<br>
 <pre>
-/**
- * 好友信息
- */
 struct tagFriendInfo
 {
-    U64 ullGID;                      /* 好友GID */
-    char szFriendName[MAX_NAME_LEN]; /* 好友名称 */
-    char szFriendImage[MAX_URL_LEN]; /* 好友头像URL地址 */
+    U64 ullGID;                      // 好友GID
+    char szFriendName[MAX_NAME_LEN]; // 好友名称
+    char szFriendImage[MAX_URL_LEN]; // 好友头像URL地址
 };
 typedef struct tagFriendInfo  FRIENDINFO;
 typedef struct tagFriendInfo* LPFRIENDINFO;
@@ -275,15 +272,12 @@ typedef struct tagFriendInfo* LPFRIENDINFO;
 </pre>
 这个例子定义了一个名为FriendInfoList的结构，它的子字段FriendInfo是一个数组，数组元素类型是FriendInfo，数组的最大元素数量由MAX_FRIEND_NUMBER指定，数组的有效元素数量由字段FriendNumber决定。如果是C语言，FriendInfoList将被代码生成器转变为C语言的结构体如下：<br>
 <pre>
-/**
- * Just a Test Message object
- */
 struct tagFriendInfoList
 {
-    U8 bFriendNumber;                            /* 好友数量 */
-    FRIENDINFO astFriendInfo[MAX_FRIEND_NUMBER]; /* 好友列表 */
-    U8 bTypeNumber;                              /* 类型数量 */
-    U64 astTypes[MAX_TYPE_NUMBER];               /* 类型列表 */
+    U8 bFriendNumber;                            // 好友数量
+    FRIENDINFO astFriendInfo[MAX_FRIEND_NUMBER]; // 好友列表
+    U8 bTypeNumber;                              // 类型数量
+    U64 astTypes[MAX_TYPE_NUMBER];               // 类型列表
 };
 
 typedef struct tagFriendInfoList  FRIENDINFOLIST;

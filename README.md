@@ -214,12 +214,12 @@ field子节点包含如下属性：<br>
     </tr>
     <tr>
         <td>tag</td>
-        <td>子元素的标签</td>
+        <td>子元素的标签。为保证协议前后兼容性，每个子元素的标签必须在其所属结构体的作用域中是唯一的</td>
         <td>是</td>
     </tr>
     <tr>
         <td>subtype</td>
-        <td>子元素类型，可取值为：uchar、char、ushort、short、uint、int、ulong、long、其他用struct或union定义的结构</td>
+        <td>子元素类型，可取值为：uchar、char、ushort、short、uint、int、ulong、long、其他用struct或union定义的结构。注意subtype不支持string、bytes、array，即数组元素不支持直接采用字符串、字节数组和数组，可以将它们定义到结构体中然后指定结构体为数组的元素（见后面的例子）。</td>
         <td>当type=array，表示子字段为数组时，必须指定subtype；当type!=array时，不必指定subtype</td>
     </tr>
     <tr>

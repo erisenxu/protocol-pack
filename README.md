@@ -38,6 +38,8 @@ Protocol-Pack特点
 </pre>
 从二进制数据解码Person结构体的语句如下：<br>
 <pre>
+    // 假定szBinData是待解码的二进制数据流，dwDataLen为二进制数据流的长度
+    // 则将二进制解码为Person结构体的C语言如下：
     PERSON stPerson;
     memset(&stPerson, sizeof(stPerson), 0);
     person_field_decode(&stPerson, szBinData, dwDataLen);
@@ -46,7 +48,7 @@ Protocol-Pack特点
 <pre>
     char szMsg1[1024]; // 定义字节数组的大小，注意C语言的字节数组不会自动扩展大小，您必须在初始化时为数组分配足够的大小
     BYTEARRAY stBa; // 定义字节数组
-    INIT_BYTE_ARRAY(stBa, szMsg1, sizeof(szMsg1));
+    INIT_BYTE_ARRAY(stBa, szMsg1, sizeof(szMsg1)); // 初始化字节数组
 </pre>
 C++语言的字节数组初始化语句如下：<br>
 <pre>
@@ -55,6 +57,7 @@ C++语言的字节数组初始化语句如下：<br>
     MByteArray stBa(1024); // 初始化时，指定初始缓存大小，如果缓存不够，将自动扩展大小
     // 因为字节数组在扩展大小时，会重新申请内存，并将之前的数据拷贝到新的内存中，为避免频繁内存操作，建议采用指定初始缓存大小的形式。
 </pre>
+Java语言的字节数组初始化语句如下：<br>
 <pre>
     ByteArray ba = new ByteArray(); // 字节数组会自动扩展大小
     // 或

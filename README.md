@@ -381,7 +381,93 @@ Example:
   -p PACKAGE_NAME
 			设置包名，仅仅对java语言有用
 </pre>
-
-
+但是针对数字类型的数据(比如32位整数)，它们的长度是固定的，可以不必将长度编码到数据流中，所以它们的编码格式采用TTV
 编码规则详解
 =============
+PP采用TT(L)V的格式对数据结构进行编码，其中：<p>
+&nbsp;&nbsp;&nbsp;&nbsp;T(Tag)，字段标签，用来唯一标识或区别一个字段。编码为二进制时，占用2个字节长度。<p>
+&nbsp;&nbsp;&nbsp;&nbsp;T(Type)，字段类型，用来标识字段类型。编码为二进制时，占用1个占用长度。<p>
+&nbsp;&nbsp;&nbsp;&nbsp;L(Length)，字段的值(Value)的长度。当字段类型(Type)为整形时，不包含长度。编码为二进制时，长度占用4个字节。<p>
+&nbsp;&nbsp;&nbsp;&nbsp;V(Value)，字段的值。所占字节长度由L(Length)指定<p>
+
+PP支持的字段类型包括：<p>
+<table width='100%'>
+    <tr>
+        <td>类型</td>
+        <td>Type的值</td>
+        <td>字节长度</td>
+        <td>类型说明</td>
+    </tr>
+    <tr>
+        <td>char</td>
+        <td>1</td>
+        <td>1</td>
+		<td>有符号整数，占1个字节</td>
+    </tr>
+    <tr>
+        <td>uchar</td>
+        <td>2</td>
+        <td>1</td>
+		<td>无符号整数，占1个字节</td>
+    </tr>
+    <tr>
+        <td>short</td>
+        <td>3</td>
+        <td>2</td>
+		<td>有符号整数，占2个字节</td>
+    </tr>
+    <tr>
+        <td>ushort</td>
+        <td>4</td>
+        <td>2</td>
+		<td>无符号整数，占2个字节</td>
+    </tr>
+    <tr>
+        <td>int</td>
+        <td>5</td>
+        <td>4</td>
+		<td>有符号整数，占4个字节</td>
+    </tr>
+    <tr>
+        <td>uint</td>
+        <td>6</td>
+        <td>4</td>
+		<td>无符号整数，占4个字节</td>
+    </tr>
+    <tr>
+        <td>long</td>
+        <td>7</td>
+        <td>8</td>
+		<td>有符号整数，占8个字节</td>
+    </tr>
+    <tr>
+        <td>ulong</td>
+        <td>8</td>
+        <td>8</td>
+		<td>无符号整数，占8个字节</td>
+    </tr>
+    <tr>
+        <td>string</td>
+        <td>9</td>
+        <td>由Length字段指定</td>
+		<td>字符串类型，长度由Length字段指定</td>
+    </tr>
+    <tr>
+        <td>bytes</td>
+        <td>10</td>
+        <td>由Length字段指定</td>
+		<td>字节数组类型，长度由Length字段指定(当前暂不支持)</td>
+    </tr>
+    <tr>
+        <td>结构体类型</td>
+        <td>11</td>
+        <td>由Length字段指定</td>
+		<td>在接口描述文件中，采用Struct和Union定义的结构体类型，长度由Length字段指定</td>
+    </tr>
+    <tr>
+        <td>array</td>
+        <td>12</td>
+        <td>由Length字段指定</td>
+		<td>数组类型，长度由Length字段指定</td>
+    </tr>
+</table>

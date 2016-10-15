@@ -471,3 +471,52 @@ PP支持的字段类型包括：<p>
 		<td>数组类型，长度由Length字段指定</td>
     </tr>
 </table>
+
+举个例子，Tag为1，类型为ushort，16进制值为0x1234的整数，编码为二进制为：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 01 04 12 34 <p>
+
+Tag为4，类型为string的字符串http://www.qq.com/xy.jpg，编码为二进制为：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 04 09 00 00 00 18 68 74 74 70  3a 2f 2f 77 77 77 2e 71 71 2e 63 6f 6d 2f 78 79  2e 6a 70 67<p>
+其中：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 04 为Tag<p>
+&nbsp;&nbsp;&nbsp;nbsp;09 为类型<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 00 00 18 为字符串长度，这里长度是0x18，即24<p>
+&nbsp;&nbsp;&nbsp;nbsp;68 74 74 70  3a 2f 2f 77 77 77 2e 71 71 2e 63 6f 6d 2f 78 79  2e 6a 70 67为字符串的值<p>
+
+而复合结构体的编码为各子字段编码的拼接，例如，假定一个结构体包含以上两个字段(即一个ushort一个string)，则结构体编码为二进制为：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 02 0b 00 00 00 24 00 01 04 12 34 00 04 09 00 00 00 18 68 74 74 70  3a 2f 2f 77 77 77 2e 71 71 2e 63 6f 6d 2f 78 79  2e 6a 70 67<p>
+其中：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 02 为结构体Tag<p>
+&nbsp;&nbsp;&nbsp;nbsp;0b 为类型<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 00 00 24 为结构体长度，这里长度是0x24，即36个字节<p>
+
+&nbsp;&nbsp;&nbsp;nbsp;00 01 为第一个子字段的Tag<p>
+&nbsp;&nbsp;&nbsp;nbsp;04 为类型<p>
+&nbsp;&nbsp;&nbsp;nbsp;12 34为第一个字段的值<p>
+
+&nbsp;&nbsp;&nbsp;nbsp;00 04 为第二个子字段的Tag<p>
+&nbsp;&nbsp;&nbsp;nbsp;09 为类型(字符串)<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 00 00 18 为字符串长度，这里长度是0x18，即24<p>
+&nbsp;&nbsp;&nbsp;nbsp;68 74 74 70  3a 2f 2f 77 77 77 2e 71 71 2e 63 6f 6d 2f 78 79  2e 6a 70 67为字符串的值<p>
+
+数组字段的编码，编码Value前，会编码数组数量，数组数量会占用2字节。例如，假定一个数组元素为上面定义的结构体，且数量为2，编码为二进制为：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 03 0c 00 00 00 58 00 02<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 03 0b 00 00 00 24 00 01 04 12 34 00 04 09 00 00 00 18 68 74 74 70  3a 2f 2f 77 77 77 2e 71 71 2e 63 6f 6d 2f 78 79  2e 6a 70 67<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 03 0b 00 00 00 24 00 01 04 12 34 00 04 09 00 00 00 18 68 74 74 70  3a 2f 2f 77 77 77 2e 71 71 2e 63 6f 6d 2f 78 79  2e 6a 70 67<p>
+其中：<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 03 为数组Tag<p>
+&nbsp;&nbsp;&nbsp;nbsp;0c 为类型<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 00 00 58 为数组长度，这里长度是0x58，即88个字节<p>
+&nbsp;&nbsp;&nbsp;nbsp;00 02 为数组元素数量，这里数量为2<p>
+其他两行编码为数组元素结构体的编码。注意这里数组元素结构体的Tag与数组的Tag相同，都为0x03。<p>
+
+联合(union)的编码规则和符合结构体的编码规则一样，只是要注意一点的是，union的标签Tag即是它的选择器selector，也即是它的有效子字段的标签。只有Tag对应的union子字段会被编码，其他无效的子字段不会被编码。<p>
+例如，对于联合CsRequestData
+<pre>
+    &lt;union name='CsRequestData' desc='客户端响应协议消息结构体'>
+        &lt;field    name="Login"         type="LoginRequest"            tag='CS_MSG_LOGIN'                    desc='客户端登录请求' />
+        &lt;field    name="GetFriends"    type="char"                    tag='CS_MSG_GET_FRIEND_LIST'          desc='获取好友列表请求' />
+    &lt;/union>
+</pre>
+若其字段Login有效，则编码为二进制时，CsRequestData的tag将为CS_MSG_LOGIN，只有Login子字段会被编码；<p>
+若其字段GetFriends有效，则编码为二进制时，CsRequestData的tag为CS_MSG_GET_FRIEND_LIST，只有GetFriends子字段会被编码<p>

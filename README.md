@@ -20,7 +20,8 @@ Protocol-Pack特点
 2. CMessage目录：为C语言的实现提供支持的基础函数和测试代码。如果您的项目采用C语言，需要引入这些代码做为依赖项。<p>
 3. JMessage目录：为Java语言的实现提供支持的基础类和测试代码。如果您的项目采用Java语言，需要引入这些基础类。<p>
 4. Message目录：为C++语言的实现提供支持的基础类和测试代码。如果您的项目采用C++语言，需要引入这些基础类。<p>
-5. protocol-def目录：该目录下存放了一个数据结构定义的例子文件。
+5. OCMessage目录：为Object-C语言的实现提供支持的基础类和测试代码。如果您的项目采用Object-C语言，需要引入这些基础类。(需将pp目录下的代码拷贝到您的项目中)<p>
+6. protocol-def目录：该目录下存放了一个数据结构定义的例子文件。
 
 快速上手指南
 =============
@@ -364,6 +365,23 @@ Example:
   python generator.py --help
   python generator.py -s . -d ../test -l c -m StarMacro
 </pre>
+
+可选输入参数说明如下：<p>
+<pre>
+可选参数:
+  -?, -h, --help	显示本程序的帮助信息
+  -s DIRECTORY, --srcpath DIRECTORY
+			指定接口描述文件所在路径
+  -l {c, cpp, java, oc}, --language {c, cpp, java, oc}	
+			代码生成器生成的代码语言种类，目前可选c、cpp、java，和oc
+  -d DIRECTORY, --directory DIRECTORY
+			设置代码生成路径
+  -m FILE_NAME
+			设置宏定义文件名称
+  -p PACKAGE_NAME
+			设置包名，仅仅对java语言有用
+</pre>
+
 
 编码规则详解
 =============

@@ -449,25 +449,25 @@ PP支持的字段类型包括：<p>
     <tr>
         <td>string</td>
         <td>9</td>
-        <td>由Length字段指定</td>
+        <td>不固定</td>
 		<td>字符串类型，长度由Length字段指定</td>
     </tr>
     <tr>
         <td>bytes</td>
         <td>10</td>
-        <td>由Length字段指定</td>
+        <td>不固定</td>
 		<td>字节数组类型，长度由Length字段指定(当前暂不支持)</td>
     </tr>
     <tr>
         <td>结构体类型</td>
         <td>11</td>
-        <td>由Length字段指定</td>
+        <td>不固定</td>
 		<td>在接口描述文件中，采用Struct和Union定义的结构体类型，长度由Length字段指定</td>
     </tr>
     <tr>
         <td>array</td>
         <td>12</td>
-        <td>由Length字段指定</td>
+        <td>不固定</td>
 		<td>数组类型，长度由Length字段指定</td>
     </tr>
 </table>

@@ -18,60 +18,66 @@ var ByteArray = (function() {
 		this.expand(Int8Array.BYTES_PER_ELEMENT);
 		this.dataView.setInt8(this.length, v);
 		this.length += Int8Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getInt8 = function(pos) {
-		return this.dataView.getInt8(pos);
+		return this.dataView.getInt8(pos || 0);
 	};
 
 	ByteArray.prototype.appendUint8 = function(v) {
 		this.expand(Uint8Array.BYTES_PER_ELEMENT);
 		this.dataView.setUint8(this.length, v);
 		this.length += Uint8Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getUint8 = function(pos) {
-		return this.dataView.getUint8(pos);
+		return this.dataView.getUint8(pos || 0);
 	};
 
 	ByteArray.prototype.appendInt16 = function(v) {
 		this.expand(Int16Array.BYTES_PER_ELEMENT);
 		this.dataView.setInt16(this.length, v);
 		this.length += Int16Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getInt16 = function(pos) {
-		return this.dataView.getInt16(pos);
+		return this.dataView.getInt16(pos || 0);
 	};
 
 	ByteArray.prototype.appendUint16 = function(v) {
 		this.expand(Uint16Array.BYTES_PER_ELEMENT);
 		this.dataView.setUint16(this.length, v);
 		this.length += Uint16Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getUint16 = function(pos) {
-		return this.dataView.getUint16(pos);
+		return this.dataView.getUint16(pos || 0);
 	};
 
 	ByteArray.prototype.appendInt32 = function(v) {
 		this.expand(Int32Array.BYTES_PER_ELEMENT);
 		this.dataView.setInt32(this.length, v);
 		this.length += Int32Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getInt32 = function(pos) {
-		return this.dataView.getInt32(pos);
+		return this.dataView.getInt32(pos || 0);
 	};
 
 	ByteArray.prototype.appendUint32 = function(v) {
 		this.expand(Uint32Array.BYTES_PER_ELEMENT);
 		this.dataView.setUint32(this.length, v);
 		this.length += Uint32Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getUint32 = function(pos) {
-		return this.dataView.getUint32(pos);
+		return this.dataView.getUint32(pos || 0);
 	};
 
 	ByteArray.prototype.appendInt64 = function(v) {
@@ -81,6 +87,7 @@ var ByteArray = (function() {
 		this.length += Uint32Array.BYTES_PER_ELEMENT;
 		this.dataView.setUint32(this.length, bg.and(0xFFFFFFFF));
 		this.length += Uint32Array.BYTES_PER_ELEMENT;
+		return this;
 	};
 
 	ByteArray.prototype.getInt64 = function(pos) {
@@ -90,11 +97,11 @@ var ByteArray = (function() {
 	};
 
 	ByteArray.prototype.appendUint64 = function(v) {
-		this.appendInt64(v);
+		return this.appendInt64(v);
 	};
 
 	ByteArray.prototype.getUint64 = function(pos) {
-		return this.getInt64(pos);
+		return this.getInt64(pos || 0);
 	};
 
 	ByteArray.prototype.appendBytes = function(v) {
@@ -103,16 +110,18 @@ var ByteArray = (function() {
 		for (var i = 0; i < v.length; i++) {
 			this.appendInt8(v[i]);
 		}
+		return this;
 	};
 
-	ByteArray.prototype.getBytes = function() {
-		var v = new Uint8Array(this.buffer, 0, this.length);
+	ByteArray.prototype.getBytes = function(start, len) {
+		var v = new Uint8Array(this.buffer, start || 0, len || this.length);
 		return Array.prototype.slice.call(v);
 	};
 
 	ByteArray.prototype.appendString = function(s) {
 		s = s || '';
-		this.appendBytes(s.getBytes());
+		this.appendBytes(ByteArray.toUTF8(s));
+		return this;
 	};
 
 	ByteArray.prototype.expand = function(size) {
@@ -154,11 +163,11 @@ var ByteArray = (function() {
 		return UTF;
 	};
 
-	String.prototype.getBytes = function() {
+	ByteArray.toUTF8 = function(s) {
 		var back = [];
 		var byteSize = 0;
-		for (var i = 0; i < this.length; i++) {
-			var code = this.charCodeAt(i);
+		for (var i = 0; i < s.length; i++) {
+			var code = s.charCodeAt(i);
 			if (0x00 <= code && code <= 0x7f) {
 				byteSize += 1;
 				back.push(code);
@@ -166,8 +175,8 @@ var ByteArray = (function() {
 				byteSize += 2;
 				back.push((192 | (31 & (code >> 6))));
 				back.push((128 | (63 & code)));
-			} else if ((0x800 <= code && code <= 0xd7ff)
-				|| (0xe000 <= code && code <= 0xffff)) {
+			} else if ((0x800 <= code && code <= 0xd7ff) ||
+				(0xe000 <= code && code <= 0xffff)) {
 				byteSize += 3;
 				back.push((224 | (15 & (code >> 12))));
 				back.push((128 | (63 & (code >> 6))));
@@ -189,8 +198,8 @@ if (typeof module !== "undefined" && module.hasOwnProperty("exports")) {
 }
 
 // amd check
-if (typeof define === "function" && define.amd ) {  
-	define( "big-integer", [], function() {
+if (typeof define === "function" && define.amd) {
+	define("byte-array", [], function() {
 		return ByteArray;
 	});
 }

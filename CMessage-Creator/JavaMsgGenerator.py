@@ -17,7 +17,8 @@ M_JAVA_TYPE_MAP = {
 	'int': 'int',
 	'ulong': 'long',
 	'long': 'long',
-	'string': 'String'
+	'string': 'String',
+	'bytes': 'byte[]'
 };
 
 M_JAVA_FIELD_MAP = {
@@ -29,7 +30,8 @@ M_JAVA_FIELD_MAP = {
 	'int': 'PPIntField',
 	'ulong': 'PPULongField',
 	'long': 'PPLongField',
-	'string': 'PPStringField'
+	'string': 'PPStringField',
+	'bytes': 'PPBytesField'
 };
 
 #

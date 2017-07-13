@@ -24,10 +24,22 @@ package com.itfriday.protocol.ppfield;
 import com.itfriday.utils.ByteArray;
 import com.itfriday.utils.ToolException;
 
+import java.io.Serializable;
+
 /**
  * Created by erisenxu on 2016/9/3.
  */
-public interface PPField {
+public interface PPField extends Serializable {
+
+    /**
+     * 消息不全，没有长度字段
+     */
+    int MESSAGE_LENGTH_NOT_PRESENT = -1;
+
+    /**
+     * 消息类型不对
+     */
+    int MESSAGE_LENGTH_TYPE_INVALID = -2;
 
     /**
      * 字段编码

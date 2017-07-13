@@ -64,7 +64,7 @@ public abstract class PPCompositeField implements PPField {
             bType = szBuf[start + 2];
 
             // 消息长度
-            iFieldLen = getLengthByType(bType, szBuf, start);
+            iFieldLen = getLengthByType(bType, szBuf, start, szBuf.length);
             if (iFieldLen < 0 || szBuf.length < start + iFieldLen) {
                 throw new ToolException("Composite field decode error, the length of the bytes is less than" + (start + iFieldLen));
             }
@@ -86,14 +86,16 @@ public abstract class PPCompositeField implements PPField {
     public void setValue(String value) {
     }
 
+
     /**
      * 取某个类型字段的长度
      * @param bType 字段类型
      * @param szBuf 要解析的协议，里面可能包含长度字段
      * @param iStart 协议的起始
-     * @return 返回字段的长度(byte)，长度包含Tag和Type的长度
+     * @param iBufLen 协议的总长度
+     * @return 返回字段的长度(byte)，长度包含Tag和Type的长度。返回-1表示长度不够，返回-2表示协议类型不合法
      */
-    public static int getLengthByType(byte bType, byte[] szBuf, int iStart) throws ToolException {
+    public static int getLengthByType(byte bType, byte[] szBuf, int iStart, int iBufLen) {
         int iMinLen = 3;
 
         switch (bType) {
@@ -113,16 +115,36 @@ public abstract class PPCompositeField implements PPField {
             case PPFieldType.FIELD_TYPE_BYTES:
             case PPFieldType.FIELD_TYPE_TLV:
             case PPFieldType.FIELD_TYPE_ARRAY: {
-                if (null != szBuf && szBuf.length >= iStart + iMinLen + 4) {
-                    int nLen = ByteArray.bytesToInt(szBuf, iStart + iMinLen);
-                    return iMinLen + 4 + nLen;
+                try {
+                    if (null != szBuf && szBuf.length >= iStart + iMinLen + 4) {
+                        int nLen = ByteArray.bytesToInt(szBuf, iStart + iMinLen);
+                        return iMinLen + 4 + nLen;
+                    }
+                    return MESSAGE_LENGTH_NOT_PRESENT;
+                } catch (ToolException ex) {
+                    return MESSAGE_LENGTH_NOT_PRESENT;
                 }
-                return -1;
             }
             default:
-                return -2;
+                return MESSAGE_LENGTH_TYPE_INVALID;
         }
         //return iMinLen;
+    }
+
+    /**
+     * 取某个类型字段的长度
+     * @param szBuf 要解析的协议，里面可能包含长度字段
+     * @param iStart 协议的起始
+     * @param iBufLen 协议的总长度
+     * @return 返回字段的长度(byte)，长度包含Tag和Type的长度。返回-1表示长度不够，返回-2表示协议类型不合法
+     */
+    public static int getLength(byte[] szBuf, int iStart, int iBufLen) {
+
+        if (szBuf == null) return -1;
+
+        if (iBufLen < iStart + 3) return -1;
+
+        return getLengthByType(szBuf[iStart + 2], szBuf, iStart, iBufLen);
     }
 
     /**

@@ -19,6 +19,7 @@ M_C_NAME_PREFIX_MAP = {
 	'ulong': 'ull',
 	'long': 'll',
 	'string': 'sz',
+	'bytes': 'sz',
 	'array': 'ast'
 };
 
@@ -31,7 +32,8 @@ M_C_TYPE_MAP = {
 	'int': 'S32',
 	'ulong': 'U64',
 	'long': 'S64',
-	'string': 'char'
+	'string': 'char',
+	'bytes': 'char'
 };
 
 M_C_CODEC_MAP = {
@@ -44,6 +46,7 @@ M_C_CODEC_MAP = {
 	'ulong': 'ulong',
 	'long': 'long',
 	'string': 'string',
+	'bytes': 'bytes',
 	'array': 'array'
 };
 
@@ -66,5 +69,8 @@ M_C_FIELD_TYPE_MAP = {
 	'uint': 'FIELD_TYPE_UINT',
 	'int': 'FIELD_TYPE_INT',
 	'ulong': 'FIELD_TYPE_ULONG',
-	'long': 'FIELD_TYPE_LONG'
+	'long': 'FIELD_TYPE_LONG',
+	'string': 'FIELD_TYPE_STRING',
+	'bytes': 'FIELD_TYPE_BYTES',
+	'array': 'FIELD_TYPE_ARRAY'
 };

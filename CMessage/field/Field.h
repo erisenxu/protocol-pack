@@ -382,6 +382,14 @@ int array_field_decode(void* pstField, U32 dwFieldSize, U16 nMaxNum, const char*
 int get_length_by_type(U8 bType, const char* szBuf, int iBufLen);
 
 /**
+ * 从字节流中获取消息长度
+ * @param szBuf 要解析的协议，里面可能包含长度字段
+ * @param iBufLen 协议的长度
+ * @return 返回字段的长度(byte)，长度包含Tag和Type的长度
+ */
+int get_length_from_buffer(const char* szBuf, int iBufLen);
+
+/**
  * 从消息中读取一个字节，不检查长度
  * @param szBuf 消息字段
  * @return 返回读取的字节
@@ -572,7 +580,7 @@ int ulong_field_to_xml(const char* szFieldName, void* pullValue, LPBYTEARRAY pst
 /**
  * 将字段格式化成可读形式
  * @param szFieldName 要格式化的字段名称
- * @param pullValue 字段的值
+ * @param szFieldValue 字段的值
  * @param pstByteArray 保存字段信息的缓存区
  * @param szPrefix 格式化字符串的前缀
  * @return 成功返回0，失败返回错误码
@@ -582,12 +590,34 @@ int string_field_format(const char* szFieldName, const char* szFieldValue, LPBYT
 /**
  * 将字段格式化成XML形式
  * @param szFieldName 要格式化的字段名称
- * @param pullValue 字段的值
+ * @param szFieldValue 字段的值
  * @param pstByteArray 保存字段信息的缓存区
  * @param szPrefix 格式化字符串的前缀
  * @return 成功返回0，失败返回错误码
  */
 int string_field_to_xml(const char* szFieldName, const char* szFieldValue, LPBYTEARRAY pstByteArray, const char* szPrefix);
+
+/**
+ * 将字段格式化成可读形式
+ * @param szFieldName 要格式化的字段名称
+ * @param szFieldValue 字段的值
+ * @param dwValueLen 值的长度
+ * @param pstByteArray 保存字段信息的缓存区
+ * @param szPrefix 格式化字符串的前缀
+ * @return 成功返回0，失败返回错误码
+ */
+int bytes_field_format(const char* szFieldName, const char* szFieldValue, U32 dwValueLen, LPBYTEARRAY pstByteArray, const char* szPrefix);
+
+/**
+ * 将字段格式化成XML形式
+ * @param szFieldName 要格式化的字段名称
+ * @param szFieldValue 字段的值
+ * @param dwValueLen 值的长度
+ * @param pstByteArray 保存字段信息的缓存区
+ * @param szPrefix 格式化字符串的前缀
+ * @return 成功返回0，失败返回错误码
+ */
+int bytes_field_to_xml(const char* szFieldName, const char* szFieldValue, U32 dwValueLen, LPBYTEARRAY pstByteArray, const char* szPrefix);
 
 /**
  * 将数组字段格式化

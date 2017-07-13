@@ -202,6 +202,33 @@ class CMsgGenerator(MsgGenerator):
 					buildFieldPrefix, fi.name);
 				self.getFieldByName += '%s\n\t\t%sreturn %s;'%(getFieldPrefix, unionGetValue, attrName);
 				pass;
+			elif (fi.type == 'bytes'):
+				# 长度
+				attrLen = '%sU32 dw%sLen;'%(unionTab, getAttrName(fi.name));
+				attrLen = '{0:{width}} /* '.format(attrLen, width=maxWidth);
+				self.attributes += u'\n\t%s%s的长度 */'%(attrLen, fi.desc);
+				attrDef = '%schar %s%s[%s];'%(unionTab, getNamePrefix(fi.type), getAttrName(fi.name), fi.count);
+				attrDef = '{0:{width}} /* '.format(attrDef, width=maxWidth);
+				self.attributes += '\n\t%s%s */'%(attrDef, fi.desc);
+				# 处理decode
+				self.subFieldDecode += '\n\tcase %s:\n\t\treturn %s_field_decode(pst%s->%s%s, %s, &pst%s->dw%sLen, szBuf, iBufLen);'%(fi.tag, getCodecName(fi.type), className, getNamePrefix(fi.type), getAttrName(fi.name), fi.count, className, getAttrName(fi.name));
+				# 处理encode
+				self.fieldEncode += '\n\t%sCHECK_FUNC_RET(%s_field_encode(pst%s->%s%s, pst%s->dw%sLen, %s, pstByteArray), iRet);%s'%(unionTab, getCodecName(fi.type), className, getNamePrefix(fi.type),
+					getAttrName(fi.name), className, getAttrName(fi.name), fi.tag, unionEncodeEnd);
+				# 处理format
+				self.formats += '\n\t%sCHECK_FUNC_RET(%s_field_format("%s", pst%s->%s%s, pst%s->dw%sLen, pstByteArray, szSubPrefix), iRet);%s'%(unionTab, getCodecName(fi.type), fi.name, className, getNamePrefix(fi.type),
+					getAttrName(fi.name), className, getAttrName(fi.name), unionEncodeEnd);
+				# 处理toXml
+				self.toXmls += '\n\t%sCHECK_FUNC_RET(%s_field_to_xml("%s", pst%s->%s%s, pst%s->dw%sLen, pstByteArray, szSubPrefix), iRet);%s'%(unionTab, getCodecName(fi.type), fi.name, className, getNamePrefix(fi.type),
+					getAttrName(fi.name), className, getAttrName(fi.name), unionEncodeEnd);
+				# 处理setfieldvalue
+				attrName = 'pst%s->%s%s'%(className, getNamePrefix(fi.type), getAttrName(fi.name));
+				self.setValueByName += '%s\n\t\tBYTEARRAY stBuf;\n\t\tINIT_BYTE_ARRAY(stBuf, %s, sizeof(%s));'%(setValuePrefix, attrName, attrName);
+				self.setValueByName += '\n\t\thex_string_to_bytes(&stBuf, szValue);\n\t\tpst%s->dw%sLen = stBuf.dwLen;'%(className, getAttrName(fi.name));
+				self.buildFieldByName += '%s\n\t\tpstSubFieldInfo->bFieldType = FIELD_TYPE_BYTES;\n\t\tpstSubFieldInfo->getSubFieldByName = NULL;\n\t\tpstSubFieldInfo->setSubFieldValueByName = NULL;\n\t\tpstSubFieldInfo->buildSubFieldInfoByName = NULL;\n\t\tSTRNCPY(pstSubFieldInfo->szFieldName, sizeof(pstSubFieldInfo->szFieldName),\n\t\t\t"%s", sizeof(pstSubFieldInfo->szFieldName));'%(
+					buildFieldPrefix, fi.name);
+				self.getFieldByName += '%s\n\t\t%sreturn %s;'%(getFieldPrefix, unionGetValue, attrName);
+				pass;
 			else:
 				attrDef = '%s%s %s%s;'%(unionTab, getStructName(fi.type), getNamePrefix(fi.type), getAttrName(fi.name));
 				attrDef = '{0:{width}} /* '.format(attrDef, width=maxWidth);

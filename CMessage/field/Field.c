@@ -704,6 +704,25 @@ int get_length_by_type(U8 bType, const char* szBuf, int iBufLen)
 }
 
 /**
+ * 从字节流中获取消息长度
+ * @param szBuf 要解析的协议，里面可能包含长度字段
+ * @param iBufLen 协议的长度
+ * @return 返回字段的长度(byte)，长度包含Tag和Type的长度
+ */
+int get_length_from_buffer(const char* szBuf, int iBufLen)
+{
+    int iMinLen = sizeof(U16) + sizeof(U8);
+
+    if (NULL != szBuf && iBufLen >= iMinLen)
+    {
+        U8 bType = *(szBuf + sizeof(U16));
+        return get_length_by_type(bType, szBuf, iBufLen);
+    }
+
+    return ERROR_DECODE_BUFSIZE_SHORT;
+}
+
+/**
  * 从消息中读取一个字节，不检查长度
  * @param szBuf 消息字段
  * @return 返回读取的字节
@@ -1066,7 +1085,7 @@ int ulong_field_to_xml(const char* szFieldName, void* pullValue, LPBYTEARRAY pst
 /**
  * 将字段格式化成可读形式
  * @param szFieldName 要格式化的字段名称
- * @param pullValue 字段的值
+ * @param szFieldValue 字段的值
  * @param pstByteArray 保存字段信息的缓存区
  * @param szPrefix 格式化字符串的前缀
  * @return 成功返回0，失败返回错误码
@@ -1086,7 +1105,7 @@ int string_field_format(const char* szFieldName, const char* szFieldValue, LPBYT
 /**
  * 将字段格式化成XML形式
  * @param szFieldName 要格式化的字段名称
- * @param pullValue 字段的值
+ * @param szFieldValue 字段的值
  * @param pstByteArray 保存字段信息的缓存区
  * @param szPrefix 格式化字符串的前缀
  * @return 成功返回0，失败返回错误码
@@ -1101,6 +1120,84 @@ int string_field_to_xml(const char* szFieldName, const char* szFieldValue, LPBYT
 	SNPRINTF(szValue, sizeof(szValue), "%s<%s>%s</%s>\n", szPrefix, szFieldName, szStr, szFieldName);
 
 	return bytearray_append_string(pstByteArray, szValue, strlen(szValue));
+}
+
+/**
+ * 将字段格式化成可读形式
+ * @param szFieldName 要格式化的字段名称
+ * @param szFieldValue 字段的值
+ * @param dwValueLen 值的长度
+ * @param pstByteArray 保存字段信息的缓存区
+ * @param szPrefix 格式化字符串的前缀
+ * @return 成功返回0，失败返回错误码
+ */
+int bytes_field_format(const char* szFieldName, const char* szFieldValue, U32 dwValueLen, LPBYTEARRAY pstByteArray, const char* szPrefix)
+{
+    char szValue[MAX_FIELD_INFO_LEN];
+
+    if (NULL == szFieldName || NULL == pstByteArray || NULL == szPrefix) return ERROR_INPUT_PARAM_NULL;
+
+    if (NULL == szFieldValue || 0 == dwValueLen)
+    {
+        SNPRINTF(szValue, sizeof(szValue), "%s%s=\n", szPrefix, szFieldName);
+        return bytearray_append_string(pstByteArray, szValue, strlen(szValue));
+    }
+    else
+    {
+        U32 i = 0;
+        int iRet = 0;
+
+        SNPRINTF(szValue, sizeof(szValue), "%s%s=", szPrefix, szFieldName);
+        CHECK_FUNC_RET(bytearray_append_string(pstByteArray, szValue, strlen(szValue)), iRet);
+
+        for (i = 0; i < dwValueLen; i++)
+        {
+            SNPRINTF(szValue, sizeof(szValue), "%02x ", (U8)szFieldValue[i]);
+            CHECK_FUNC_RET(bytearray_append_string(pstByteArray, szValue, strlen(szValue)), iRet);
+        }
+    }
+
+    return 0;
+}
+
+/**
+ * 将字段格式化成XML形式
+ * @param szFieldName 要格式化的字段名称
+ * @param szFieldValue 字段的值
+ * @param dwValueLen 值的长度
+ * @param pstByteArray 保存字段信息的缓存区
+ * @param szPrefix 格式化字符串的前缀
+ * @return 成功返回0，失败返回错误码
+ */
+int bytes_field_to_xml(const char* szFieldName, const char* szFieldValue, U32 dwValueLen, LPBYTEARRAY pstByteArray, const char* szPrefix)
+{
+    char szValue[MAX_FIELD_INFO_LEN];
+
+    if (NULL == szFieldName || NULL == pstByteArray || NULL == szPrefix) return ERROR_INPUT_PARAM_NULL;
+
+    if (NULL == szFieldValue || 0 == dwValueLen)
+    {
+        SNPRINTF(szValue, sizeof(szValue), "%s<%s></%s>\n", szPrefix, szFieldName, szFieldName);
+        return bytearray_append_string(pstByteArray, szValue, strlen(szValue));
+    }
+    else
+    {
+        U32 i = 0;
+        int iRet = 0;
+
+        SNPRINTF(szValue, sizeof(szValue), "%s<%s>", szPrefix, szFieldName);
+        CHECK_FUNC_RET(bytearray_append_string(pstByteArray, szValue, strlen(szValue)), iRet);
+
+        for (i = 0; i < dwValueLen; i++)
+        {
+            SNPRINTF(szValue, sizeof(szValue), "%02x", (U8)szFieldValue[i]);
+            CHECK_FUNC_RET(bytearray_append_string(pstByteArray, szValue, strlen(szValue)), iRet);
+        }
+        SNPRINTF(szValue, sizeof(szValue), "</%s>\n", szFieldName);
+        CHECK_FUNC_RET(bytearray_append_string(pstByteArray, szValue, strlen(szValue)), iRet);
+    }
+
+    return 0;
 }
 
 /**

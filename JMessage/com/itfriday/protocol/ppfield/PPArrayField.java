@@ -124,7 +124,7 @@ public class PPArrayField<E extends PPField> implements PPField {
         /* 解析子字段 */
         for (short i = 0; i < nArrayNum; i++) {
             /* 通过类型获得数据长度 */
-            int iMsgLen = PPCompositeField.getLengthByType(bType, szBuf, iStart);
+            int iMsgLen = PPCompositeField.getLengthByType(bType, szBuf, iStart, szBuf.length);
             if (iLeftLen < iMsgLen || iMsgLen < 0) {
                 throw new ToolException("Array field decode error, the message buffer is too short");
             }

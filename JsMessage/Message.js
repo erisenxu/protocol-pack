@@ -1,4 +1,4 @@
-if (typeof require === "function") var bigInt = require("ByteArray");
+if (typeof require === "function") var ByteArray = require("./ByteArray");
 
 var PPField = {};
 

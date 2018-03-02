@@ -114,7 +114,7 @@ var ByteArray = (function() {
     };
 
     ByteArray.prototype.getBytes = function(start, len) {
-        var v = new Uint8Array(this.buffer, start || 0, len || this.length);
+        var v = new Uint8Array(this.buffer, start || 0, len === undefined ? this.length : len);
         return Array.prototype.slice.call(v);
     };
 

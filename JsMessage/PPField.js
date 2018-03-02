@@ -314,7 +314,21 @@ PPField.PPCompositeField = (function() {
 
     function PPCompositeField() {}
 
-    PPCompositeField.prototype.encode = function(baBuf, tag) {};
+    PPCompositeField.prototype.encode = function(baBuf, tag) {
+        // 字段头
+        baBuf.appendUint16(tag).appendUint8(PPField.FIELD_TYPE_TLV);
+        // 预留长度
+        var lenPos = baBuf.length;
+        baBuf.appendUint32(0);
+        var oldLen = baBuf.length;
+        // 编码子字段
+        this.encodeSubField(baBuf);
+        // 长度
+        baBuf.dataView.setUint32(lenPos, baBuf.length - oldLen);
+    };
+
+    PPCompositeField.prototype.encodeSubField = function(baBuf) {
+    };
 
     PPCompositeField.prototype.getSubField = function(tag) {
         return null;

@@ -81,12 +81,12 @@ pp.CityInfo = (function() {
 
     CityInfo.prototype.fromJson = function(opt) {
     	var o = opt || {};
-    	this.cityCode.value = o.cityCode || '';
-    	this.cityName.value = o.cityName || '';
+    	this.cityCode.fromJson(o.cityCode);
+    	this.cityName.fromJson(o.cityName);
     };
 
     CityInfo.prototype.toJson = function() {
-    	return {cityCode:this.cityCode.value,cityName:this.cityName.value};
+    	return {cityCode:this.cityCode.toJson(), cityName:this.cityName.toJson()};
     };
 
     return CityInfo;

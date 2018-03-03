@@ -56,7 +56,7 @@ PPField.PPByteField = (function() {
     "use strict";
 
     function PPByteField(value) {
-        this.value = value || 0;
+        this.value = parseInt(value || 0);
     }
 
     PPByteField.prototype.encode = function(baBuf, tag) {
@@ -67,6 +67,14 @@ PPField.PPByteField = (function() {
         this.value = baBuf.getInt8(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPByteField.prototype.fromJson = function(value) {
+        this.value = parseInt(value || 0);
+    };
+
+    PPByteField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPByteField;
 })();
 
@@ -74,7 +82,7 @@ PPField.PPUByteField = (function() {
     "use strict";
 
     function PPUByteField(value) {
-        this.value = value || 0;
+        this.value = parseInt(value || 0);
     }
 
     PPUByteField.prototype.encode = function(baBuf, tag) {
@@ -85,6 +93,14 @@ PPField.PPUByteField = (function() {
         this.value = baBuf.getUint8(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPUByteField.prototype.fromJson = function(value) {
+        this.value = parseInt(value || 0);
+    };
+
+    PPUByteField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPUByteField;
 })();
 
@@ -92,7 +108,7 @@ PPField.PPShortField = (function() {
     "use strict";
 
     function PPShortField(value) {
-        this.value = value || 0;
+        this.value = parseInt(value || 0);
     }
 
     PPShortField.prototype.encode = function(baBuf, tag) {
@@ -103,6 +119,14 @@ PPField.PPShortField = (function() {
         this.value = baBuf.getInt16(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPShortField.prototype.fromJson = function(value) {
+        this.value = parseInt(value || 0);
+    };
+
+    PPShortField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPShortField;
 })();
 
@@ -110,7 +134,7 @@ PPField.PPUShortField = (function() {
     "use strict";
 
     function PPUShortField(value) {
-        this.value = value || 0;
+        this.value = parseInt(value || 0);
     }
 
     PPUShortField.prototype.encode = function(baBuf, tag) {
@@ -121,6 +145,14 @@ PPField.PPUShortField = (function() {
         this.value = baBuf.getUint16(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPUShortField.prototype.fromJson = function(value) {
+        this.value = parseInt(value || 0);
+    };
+
+    PPUShortField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPUShortField;
 })();
 
@@ -128,7 +160,7 @@ PPField.PPIntField = (function() {
     "use strict";
 
     function PPIntField(value) {
-        this.value = value || 0;
+        this.value = parseInt(value || 0);
     }
 
     PPIntField.prototype.encode = function(baBuf, tag) {
@@ -139,6 +171,14 @@ PPField.PPIntField = (function() {
         this.value = baBuf.getInt32(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPIntField.prototype.fromJson = function(value) {
+        this.value = parseInt(value || 0);
+    };
+
+    PPIntField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPIntField;
 })();
 
@@ -146,7 +186,7 @@ PPField.PPUIntField = (function() {
     "use strict";
 
     function PPUIntField(value) {
-        this.value = value || 0;
+        this.value = parseInt(value || 0);
     }
 
     PPUIntField.prototype.encode = function(baBuf, tag) {
@@ -155,6 +195,14 @@ PPField.PPUIntField = (function() {
 
     PPUIntField.prototype.decode = function(baBuf, start) {
         this.value = baBuf.getUint32(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
+    };
+
+    PPUIntField.prototype.fromJson = function(value) {
+        this.value = parseInt(value || 0);
+    };
+
+    PPUIntField.prototype.toJson = function() {
+        return this.value;
     };
 
     return PPUIntField;
@@ -175,6 +223,14 @@ PPField.PPLongField = (function() {
         this.value = baBuf.getInt64(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPLongField.prototype.fromJson = function(value) {
+        this.value = value || '0';
+    };
+
+    PPLongField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPLongField;
 })();
 
@@ -193,6 +249,14 @@ PPField.PPULongField = (function() {
         this.value = baBuf.getUint64(start + Uint16Array.BYTES_PER_ELEMENT + Uint8Array.BYTES_PER_ELEMENT);
     };
 
+    PPULongField.prototype.fromJson = function(value) {
+        this.value = value || '0';
+    };
+
+    PPULongField.prototype.toJson = function() {
+        return this.value;
+    };
+
     return PPULongField;
 })();
 
@@ -200,7 +264,7 @@ PPField.PPStringField = (function() {
     "use strict";
 
     function PPStringField(value) {
-        this.value = value || '';
+        this.value = (value || '').toString();
     }
 
     PPStringField.prototype.encode = function(baBuf, tag) {
@@ -214,6 +278,14 @@ PPField.PPStringField = (function() {
         istart += Uint32Array.BYTES_PER_ELEMENT;
         var b = baBuf.getBytes(istart, len);
         this.value = ByteArray.fromUTF8(b);
+    };
+
+    PPStringField.prototype.fromJson = function(value) {
+        this.value = (value || '').toString();
+    };
+
+    PPStringField.prototype.toJson = function() {
+        return this.value;
     };
 
     return PPStringField;
@@ -235,6 +307,14 @@ PPField.PPBytesField = (function() {
         var len = baBuf.getUint32(istart);
         istart += Uint32Array.BYTES_PER_ELEMENT;
         this.value = baBuf.getBytes(istart, len);
+    };
+
+    PPBytesField.prototype.fromJson = function(value) {
+        this.value = value || [];
+    };
+
+    PPBytesField.prototype.toJson = function() {
+        return this.value;
     };
 
     return PPBytesField;
@@ -259,7 +339,7 @@ PPField.PPArrayField = (function() {
             throw "getFieldByIndex error, field to create subfield, cause the field creator is null";
         }
 
-        var field = this.fieldCreator.create();
+        var field = new this.fieldCreator();
         this.value.push(field);
         return field;
     };

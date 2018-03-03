@@ -50,14 +50,13 @@ var ps4 = new PPField.PPStringField();
 ps4.decode(ba, 0);
 console.log(ps4.value);
 
-var xxx = (function() {
-	function PPFieldCreator(){}
-	PPFieldCreator.prototype.create = function() {return new pp.CoutryInfo();}
-	return PPFieldCreator;
-})();
-var arr = new PPField.PPArrayField((function() {
-	function PPFC(){}
-	PPFC.prototype.create = function() {return new pp.CoutryInfo();}
-	return PPFC;
-})());
+function aaa(p) {
+	return new p({cityInfo:{cityCode:110, cityName:'深圳2'}});
+}
 
+var ttt = aaa(pp.CoutryInfo);
+console.log(ttt.toJson());
+
+var yyy = new pp.CoutryInfo();
+yyy.fromJson({cityInfo:{cityCode:234, cityName:'深圳89'}});
+console.log(yyy.toJson());

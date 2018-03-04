@@ -22,7 +22,7 @@ console.log(ba.getInt64(0) === '1311768467294899695');//*/
 
 
 var pp = require('./CityInfo');
-var ci = new pp.CoutryInfo({cityInfo:{cityCode:110, cityName:'深圳'}});
+/*var ci = new pp.CoutryInfo({cityInfo:{cityCode:110, cityName:'深圳'}});
 console.log(ci.toJson());
 
 var ba = new ByteArray();
@@ -59,4 +59,28 @@ console.log(ttt.toJson());
 
 var yyy = new pp.CoutryInfo();
 yyy.fromJson({cityInfo:{cityCode:234, cityName:'深圳89'}});
-console.log(yyy.toJson());
+console.log(yyy.toJson());*/
+
+var userInfo = new pp.PeopleInfo();
+
+userInfo.fromJson({
+	userName: '小明',
+	cityInfos:[
+		{cityCode:100, cityName:'北京'},
+		{cityCode:102, cityName:'深圳'}
+	],
+	sex: '0'
+});
+
+console.log(userInfo.toJson());
+
+userInfo.getCityInfos().getFieldByIndex(0).setCityCode('103');
+userInfo.getCityInfos().getFieldByIndex(1).setCityName('武汉');
+
+var ba = new ByteArray();
+userInfo.encode(ba, 1);
+
+var userInfo2 = new pp.PeopleInfo();
+userInfo2.decode(ba, 0);
+
+console.log(userInfo2.toJson());

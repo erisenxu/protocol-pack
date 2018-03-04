@@ -323,14 +323,14 @@ PPField.PPBytesField = (function() {
 PPField.PPArrayField = (function() {
     "use strict";
 
-    function PPArrayField(fieldCreator) {
-        this.value = [];
+    function PPArrayField(fieldCreator, value) {
+        this.fromJson(value);
         this.fieldCreator = fieldCreator;
     }
 
     PPArrayField.prototype.getFieldByIndex = function(index) {
-        // index 只可以>=0 && <= mValue.size(),如果等于mValue.size(), 需要重新创建一个新的
-        if (index < 0 || index > mValue.size()) {
+        // index 只可以>=0 && <= this.value.length,如果等于this.value.length, 需要重新创建一个新的
+        if (index < 0 || index > this.value.length) {
             throw "getFieldByIndex error, the index " + index + " is invalid";
         }
         if (index < this.value.length) return this.value[index];
@@ -384,6 +384,23 @@ PPField.PPArrayField = (function() {
             istart += msgLen;
             leftLen -= msgLen;
         }
+    };
+
+    PPArrayField.prototype.fromJson = function(value) {
+        var v = value || [];
+        this.value = [];
+
+        for (var i = 0; i < v.length; i++) {
+            this.getFieldByIndex(i).fromJson(v[i]);
+        }
+    };
+
+    PPArrayField.prototype.toJson = function() {
+        var jo = [];
+        this.value.forEach(function(subfield){
+            jo.push(subfield.toJson());
+        });
+        return jo;
     };
 
     return PPArrayField;

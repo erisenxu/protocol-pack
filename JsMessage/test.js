@@ -81,6 +81,6 @@ var ba = new ByteArray();
 userInfo.encode(ba, 1);
 
 var userInfo2 = new pp.PeopleInfo();
-userInfo2.decode(ba, 0);
+userInfo2.decode(ba);
 
 console.log(userInfo2.toJson());

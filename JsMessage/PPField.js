@@ -432,7 +432,8 @@ PPField.PPCompositeField = (function() {
     }
 
     PPCompositeField.prototype.decode = function(baBuf, start) {
-        if (null == baBuf || start < 0) {
+        var stt = start || 0;
+        if (null == baBuf || stt < 0) {
             throw "Composite field decode error, the parameter is null";
         }
 
@@ -441,7 +442,7 @@ PPField.PPCompositeField = (function() {
 
         var nTag = 0;
         var bType = 0;
-        var istart = start + iMinLen;
+        var istart = stt + iMinLen;
 
         var iLeftLen = 0;
         var iFieldLen = 0;

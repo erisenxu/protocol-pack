@@ -11,6 +11,7 @@ import CMsgGenerator;
 import CppMsgGenerator;
 import JavaMsgGenerator;
 import OcMsgGenerator;
+import JsMsgGenerator;
 
 #
 # 消息配置文件读取与处理
@@ -25,6 +26,8 @@ class MsgCreatorHandler(ContentHandler):
 		self.outputDir = outputDir;
 		self.language = language;
 		self.packageName = packageName;
+		self.headerContent = '';
+		self.appContent = '';
 		pass;
 
 	def startDocument(self):
@@ -64,13 +67,15 @@ class MsgCreatorHandler(ContentHandler):
 				g = CppMsgGenerator.CppMsgGenerator(self.curStructInfo, macroFile=self.macroFile);
 			elif (self.language == 'oc'):
 				g = OcMsgGenerator.OcMsgGenerator(self.curStructInfo, macroFile=self.macroFile);
+			elif (self.language == 'js'):
+				g = JsMsgGenerator.JsMsgGenerator(self.curStructInfo, macroFile=self.macroFile);
 			elif (self.language == 'java'):
 				g = JavaMsgGenerator.JavaMsgGenerator(self.curStructInfo, macroFile=self.macroFile, packageName=self.packageName);
 			else:
 				g = MsgGenerator(self.curStructInfo, macroFile=self.macroFile);
 
-			g.generateHeaderFile(self.outputDir);
-			g.generateAppFile(self.outputDir, self.macroFile);
+			self.headerContent += g.generateHeaderFile(self.outputDir);
+			self.appContent += g.generateAppFile(self.outputDir, self.macroFile);
 			self.curStructInfo = None;
 		elif (name == 'enum'):
 			self.enums.append(self.curStructInfo);
@@ -93,7 +98,8 @@ def genernateFieldFile(xmlSrcPath, macroFileName, outputDir, language, packageNa
 	macros = [];
 
 	parser = make_parser();
-	parser.setContentHandler(MsgCreatorHandler(enums, macros, macroFileName, outputDir, language, packageName));
+	handler = MsgCreatorHandler(enums, macros, macroFileName, outputDir, language, packageName);
+	parser.setContentHandler(handler);
 
 	for root, dirs, files in os.walk(xmlSrcPath):
 		for name in files:
@@ -105,6 +111,8 @@ def genernateFieldFile(xmlSrcPath, macroFileName, outputDir, language, packageNa
 		CMsgGenerator.generateMacroFile(outputDir, macroFileName, enums, macros);
 	elif (language == 'oc'):
 		OcMsgGenerator.generateMacroFile(outputDir, macroFileName, enums, macros);
+	elif (language == 'js'):
+		JsMsgGenerator.generateMsgDefineFile(outputDir, macroFileName, handler.appContent, enums, macros);
 	elif (language == 'java'):
 		JavaMsgGenerator.generateMacroFile(outputDir, macroFileName, enums, macros, packageName);
 

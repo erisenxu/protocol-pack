@@ -289,6 +289,7 @@ class CppMsgGenerator(MsgGenerator):
 		destFile.close();
 		# 生成handler
 		self.generateHandlerHeaderFile(outDir);
+		return '';
 
 	#
 	# 生成实现文件
@@ -309,6 +310,7 @@ class CppMsgGenerator(MsgGenerator):
 		destFile.close();
 		# 生成handler
 		self.generateHandlerAppFile(outDir, marcroFile);
+		return '';
 
 	#
 	# 生成handler的头文件

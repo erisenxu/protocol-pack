@@ -127,11 +127,11 @@ class MsgGenerator(object):
 	# 生成头文件
 	#
 	def generateHeaderFile(self, outputDir):
-		pass;
+		return '';
 
 	#
 	# 生成实现文件
 	#
 	def generateAppFile(self, outputDir, marcroFile):
-		pass;
+		return '';
 

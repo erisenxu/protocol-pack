@@ -296,6 +296,7 @@ class CMsgGenerator(MsgGenerator):
 		destFile.write(templ.safe_substitute(ClassName=className, LClassName=classMacro.lower(), UClassName=className.upper(), FieldDesc=self.structInfo.name,
 			ClassMacro=classMacro, ClassDesc=self.structInfo.desc, AttrDefine=self.attributes, Includes=self.includes).encode('utf-8'));
 		destFile.close();
+		return '';
 
 	#
 	# 生成实现文件
@@ -314,6 +315,7 @@ class CMsgGenerator(MsgGenerator):
 			UnionTagDecode=self.unionTagDecode, SubFieldDecode=self.subFieldDecode, FieldEncode=self.fieldEncode, Formats=self.formats, ToXmls=self.toXmls,
 			SetValueByName=self.setValueByName, BuildFieldByName=self.buildFieldByName, GetFieldByName=self.getFieldByName, FieldName=self.structInfo.name).encode('utf-8'));
 		destFile.close();
+		return '';
 
 #
 # generate enum define

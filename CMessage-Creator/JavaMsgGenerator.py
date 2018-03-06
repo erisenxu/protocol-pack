@@ -166,7 +166,7 @@ class JavaMsgGenerator(MsgGenerator):
 	# 生成头文件
 	#
 	def generateHeaderFile(self, outDir):
-		pass;
+		return '';
 
 	#
 	# 生成实现文件
@@ -185,8 +185,8 @@ class JavaMsgGenerator(MsgGenerator):
 			AttrSetGet=self.attrGetSetDefine, FieldEncode=self.fieldEncode, Formats=self.formats, ToXmls=self.toXmls,
 			GetSubField=self.getSubField, PackageName=self.packageName, ImplUnion=self.implUnion).encode('utf-8'));
 		destFile.close();
+		return ''
 
-#
 # generate enum define
 #
 def generateEnumDefine(si):

@@ -28,12 +28,18 @@ def getStructName(ftype):
 	if (M_JAVA_FIELD_MAP.has_key(ftype)):
 		return M_JAVA_FIELD_MAP[ftype];
 	else:
-		return ftype;
+		return 'pp.%s'%(ftype);
 
 #
 # 取属性名称
 #
 def getAttrName(name):
+	return '%s'%firstLower(name);
+
+#
+# 取函数名称
+#
+def getAttrFuncName(name):
 	return '%s'%firstUpper(name);
 
 class JsMsgGenerator(MsgGenerator):
@@ -66,7 +72,7 @@ class JsMsgGenerator(MsgGenerator):
 
 			otag = fi.tag;
 			if (self.structInfo.hasMacro(fi.tag)):
-				otag = '%s.%s'%(self.macroFile, fi.tag);
+				otag = 'pp.%s'%(fi.tag);
 
 			unionTab = '';
 			unionEncodeStart = '';
@@ -74,93 +80,92 @@ class JsMsgGenerator(MsgGenerator):
 			unionAttrNew = '';
 			unionAttrGetSet = '';
 			unionGetSubField = '';
+			unionAttrIf = '';
 
 			if (fi.type == 'array'):
-				attrNew = ' = new PPField.PPArrayField(new PPFieldCreator<%s>() {\n        @Override\n        public %s create() {\n            return new %s();\n        }\n    })'%(getStructName(fi.subtype),
-					getStructName(fi.subtype), getStructName(fi.subtype));
+				attrNew = ' = new PPField.PPArrayField(%s, o.%s)'%(getStructName(fi.subtype), getAttrName(fi.name));
+				attrNewUnion = ' = new PPField.PPArrayField(%s)'%(getStructName(fi.subtype));
 			else:
-				attrNew = ' = new %s()'%(getStructName(fi.type));
+				attrNew = ' = new %s(o.%s)'%(getStructName(fi.type), getAttrName(fi.name));
+				attrNewUnion = ' = new %s()'%(getStructName(fi.type));
 
 			if (self.structInfo.type == STRUCT_INFO_TYPE_UNION):
-				unionTab = '    ';
-				unionEncodeStart = '\n        case %s:'%(otag);
-				unionEncodeEnd = '\n            break;';
-				unionAttrGetSet = '\n        if (m%s == null) m%s %s;'%(getAttrName(fi.name), getAttrName(fi.name), attrNew);
-				unionGetSubField = '\n            mSelector = tag;\n            if (m%s == null) m%s %s;'%(getAttrName(fi.name), getAttrName(fi.name), attrNew);
-				self.implUnion = ' implements PPUnionField';
+				unionTab = '\t';
+				unionEncodeStart = '\n\t\tcase %s:'%(otag);
+				unionEncodeEnd = '\n\t\t\tbreak;';
+				unionAttrGetSet = '\n\t\tif (this.%s === undefined) this.%s %s;'%(getAttrName(fi.name), getAttrName(fi.name), attrNewUnion);
+				unionGetSubField = '\n\t\t\tthis.selector = tag;\n\t\t\tif (this.%s === undefined) this.%s %s;'%(getAttrName(fi.name), getAttrName(fi.name), attrNewUnion);
+				unionAttrIf = 'if (o.%s) {'%(getAttrName(fi.name));
+				unionAttrNew = '%s;this.selector = %s;}'%(attrNew, otag);
+				# ToJson
+				self.toJson += '%s\n\t\t\treturn {%s:this.%s.toJson()};'%(unionEncodeStart, getAttrName(fi.name), getAttrName(fi.name));
+				# FromJson
+				self.fromJson += '\n\t\tif (o.%s) {this.%s === undefined ? this.%s %s : this.%s.fromJson(o.%s);this.selector = %s;}'%(getAttrName(fi.name), getAttrName(fi.name), getAttrName(fi.name), attrNew, getAttrName(fi.name), getAttrName(fi.name), otag);
 			else:
-				unionAttrNew = attrNew;
+				unionAttrNew = '%s;'%(attrNew);
+				# ToJson
+				if (self.toJson != ''):
+					self.toJson += ',';
+				self.toJson += '%s:this.%s.toJson()'%(getAttrName(fi.name), getAttrName(fi.name));
+				# FromJson
+				self.fromJson += '\n\t\tthis.%s.fromJson(o.%s);'%(getAttrName(fi.name), getAttrName(fi.name));
 
 			# Encode
-			self.fieldEncode += '%s\n        %sm%s.encode(baBuf, (short)%s);%s'%(unionEncodeStart,
-				unionTab, getAttrName(fi.name), otag, unionEncodeEnd);
-			# Format
-			self.formats += '%s\n        %sm%s.format(sbBuf, "%s", sSubPrefix);%s'%(unionEncodeStart,
-				unionTab, getAttrName(fi.name), fi.name, unionEncodeEnd);
-			# ToXml
-			self.toXmls += '%s\n        %sm%s.toXml(sbBuf, "%s", sSubPrefix);%s'%(unionEncodeStart,
-				unionTab, getAttrName(fi.name), fi.name, unionEncodeEnd);
+			self.fieldEncode += '%s\n%s\t\tthis.%s.encode(baBuf, %s);%s'%(unionEncodeStart, unionTab, getAttrName(fi.name), otag, unionEncodeEnd);
 			# GetSubField
-			self.getSubField += '\n        case %s:%s\n            return m%s;'%(otag, unionGetSubField, getAttrName(fi.name));
+			self.getSubField += '\n\t\tcase %s:%s\n\t\t\treturn this.%s;'%(otag, unionGetSubField, getAttrName(fi.name));
 
 			# 处理属性列表
 			if (fi.type == 'array'):
 				# Attributes
-				self.attributes += '\n    /**\n     * %s\n     */\n    protected PPArrayField<%s> m%s%s;\n'%(fi.desc, getStructName(fi.subtype), getAttrName(fi.name), unionAttrNew);    
+				self.attributes += '\n\t\t%sthis.%s%s'%(unionAttrIf, getAttrName(fi.name), unionAttrNew);
 				# get and set
-				if (M_JAVA_TYPE_MAP.has_key(fi.subtype)):
-					returnValue = 'return m%s.getFieldByIndex(index).getValue();'%(getAttrName(fi.name));
-					self.attrGetSetDefine += '\n    /**\n     * %s\n     */\n    public void set%s(int index, %s value) throws ToolException {%s\n        m%s.getFieldByIndex(index).setValue(value);\n    }\n'%(fi.desc,
-						getAttrName(fi.name), getTypeName(fi.subtype), unionAttrGetSet, getAttrName(fi.name));
+				if (M_JAVA_FIELD_MAP.has_key(fi.subtype)):
+					returnValue = 'return this.%s.getFieldByIndex(index).value;'%(getAttrName(fi.name));
+					self.attrGetSetDefine += '\n    \n    %s.prototype.set%s = function(index, value) {%s\n        this.%s.getFieldByIndex(index).value = value;\n    };'%(getClassName(self.structInfo.name),
+						getAttrFuncName(fi.name), unionAttrGetSet, getAttrName(fi.name));
 				else:
-					returnValue = 'return m%s.getFieldByIndex(index);'%(getAttrName(fi.name));
-				self.attrGetSetDefine += '\n    /**\n     * %s\n     */\n    public %s get%s(int index) throws ToolException {%s\n        %s\n    }\n'%(fi.desc, getTypeName(fi.subtype),
-					getAttrName(fi.name), unionAttrGetSet, returnValue);
+					returnValue = 'return this.%s.getFieldByIndex(index);'%(getAttrName(fi.name));
+				self.attrGetSetDefine += '\n    %s.prototype.get%s = function(index) {%s\n        %s\n    };'%(getClassName(self.structInfo.name),
+					getAttrFuncName(fi.name), unionAttrGetSet, returnValue);
 			else:
 				# Attributes
-				self.attributes += '\n    /**\n     * %s\n     */\n    protected %s m%s%s;\n'%(fi.desc, getStructName(fi.type), getAttrName(fi.name), unionAttrNew);
+				self.attributes += '\n\t\t%sthis.%s%s'%(unionAttrIf, getAttrName(fi.name), unionAttrNew);
 				# get and set
-				if (M_JAVA_TYPE_MAP.has_key(fi.type)):
-					returnValue = 'return m%s.getValue();'%(getAttrName(fi.name));
-					self.attrGetSetDefine += '\n    /**\n     * %s\n     */\n    public void set%s(%s value) {%s\n        m%s.setValue(value);\n    }\n'%(fi.desc,
-						getAttrName(fi.name), getTypeName(fi.type), unionAttrGetSet, getAttrName(fi.name));
+				if (M_JAVA_FIELD_MAP.has_key(fi.type)):
+					returnValue = 'return this.%s.value;'%(getAttrName(fi.name));
+					self.attrGetSetDefine += '\n\t%s.prototype.set%s = function(value) {%s\n\t\tthis.%s.value = value;\n\t};'%(getClassName(self.structInfo.name),
+						getAttrFuncName(fi.name), unionAttrGetSet, getAttrName(fi.name));
 				else:
-					returnValue = 'return m%s;'%(getAttrName(fi.name));
-				self.attrGetSetDefine += '\n    /**\n     * %s\n     */\n    public %s get%s() {%s\n        %s\n    }\n'%(fi.desc, getTypeName(fi.type),
-					getAttrName(fi.name), unionAttrGetSet, returnValue);
+					returnValue = 'return this.%s;'%(getAttrName(fi.name));
+				self.attrGetSetDefine += '\n\t%s.prototype.get%s = function() {%s\n\t\t%s\n\t};'%(getClassName(self.structInfo.name),
+					getAttrFuncName(fi.name), unionAttrGetSet, returnValue);
 				pass;
 
 		# 处理union
 		if (self.structInfo.type == STRUCT_INFO_TYPE_UNION):
-			self.attributes = u'\n    /**\n     * Union字段标识\n     */\n    protected short mSelector = 0;\n%s'%(self.attributes);
-			self.fieldEncode = '\n        switch (mSelector) {%s\n        default:\n            break;\n        }'%(self.fieldEncode);
-			self.formats = '\n        switch (mSelector) {%s\n        default:\n            break;\n        }'%(self.formats);
-			self.toXmls = '\n        switch (mSelector) {%s\n        default:\n            break;\n        }'%(self.toXmls);
-			self.attrGetSetDefine = u'\n    @Override\n    public void setSelector(short selector) {\n        mSelector = selector;\n    }\n%s'%(self.attrGetSetDefine);
+			self.attributes = '\n\t\tthis.selector = 0;%s'%(self.attributes);
+			self.fieldEncode = '\n\t\tswitch (this.selector) {%s\n\t\tdefault:\n\t\t\tbreak;\n\t\t}'%(self.fieldEncode);
+			self.toJson = '\n\t\tswitch (this.selector) {%s\n\t\tdefault:\n\t\t\treturn {};\n\t\t}'%(self.toJson);
+		else:
+			self.toJson = '\n\t\treturn {%s};'%(self.toJson);
 
 	#
 	# 生成头文件
 	#
 	def generateHeaderFile(self, outDir):
-		pass;
+		return '';
 
 	#
 	# 生成实现文件
 	#
 	def generateAppFile(self, outDir, marcroFile):
 		className = getClassName(self.structInfo.name);
-		outDir = '%s/%s/'%(outDir, self.packageName.replace('.', '/'));
-		try:
-			os.makedirs(outDir);
-		except:
-			pass;
-		destFile = open('%s/%s.java'%(outDir, className), 'w');
 
-		templ = Template(javatemplate.JTEMPLATE.decode('utf-8'));
-		destFile.write(templ.safe_substitute(ClassName=className, ClassDesc=self.structInfo.desc, AttrDefine=self.attributes,
-			AttrSetGet=self.attrGetSetDefine, FieldEncode=self.fieldEncode, Formats=self.formats, ToXmls=self.toXmls,
-			GetSubField=self.getSubField, PackageName=self.packageName, ImplUnion=self.implUnion).encode('utf-8'));
-		destFile.close();
+		templ = Template(jstemplate.JC_TEMPLATE.decode('utf-8'));
+		return templ.safe_substitute(ClassName=className, AttrDefine=self.attributes,
+			AttrSetGet=self.attrGetSetDefine, FieldEncode=self.fieldEncode, FieldFromJson=self.fromJson,
+			FieldToJson=self.toJson, GetSubField=self.getSubField).encode('utf-8');
 
 #
 # generate enum define
@@ -169,37 +174,36 @@ def generateEnumDefine(si):
 	enumDef = '';
 
 	for fi in si.fields:
-		attrDef = '    int %s = %s;'%(fi.name, fi.value);
-		attrDef = '{0:{width}}'.format(attrDef, width=64);
-		enumDef += '%s// %s\n'%(attrDef, fi.desc);
+		enumDef += 'pp.%s = %s;\n'%(fi.name, fi.value);
 
 	return enumDef;
 
 #
 # generate macro file
 #
-def generateMacroFile(outdir, fileName, enums, macros, packageName):
-	outdir = '%s/%s/'%(outdir, packageName.replace('.', '/'));
+def generateMacroDefine(enums, macros):
+
+	macroString = '';
+	for fi in macros:
+		macroString += 'pp.%s = %s;\n'%(fi.name, fi.value);
+
+	for si in enums:
+		macroString += generateEnumDefine(si);
+
+	return macroString;
+
+#
+# generate macro file
+#
+def generateMsgDefineFile(outdir, fileName, msgDefines, enums, macros):
+	outdir = '%s'%(outdir);
 	try:
 		os.makedirs(outdir);
 	except:
 		pass;
-	destFile = open('%s/%s.java'%(outdir, fileName), 'w');
-	destFile.write('/*\n * @(#) %s.java Created by @itfriday message creator\n */\n'%fileName);
-	destFile.write('\npackage %s;\n'%(packageName));
-	destFile.write('\npublic interface %s {\n'%(fileName));
+	destFile = open('%s/%s.js'%(outdir, fileName), 'w');
+	templ = Template(jstemplate.JSTEMPLATE.decode('utf-8'));
 
-	macroString = '';
-	for fi in macros:
-		attrDef = '    int %s = %s;'%(fi.name, fi.value);
-		attrDef = '{0:{width}}'.format(attrDef, width=64);
-		macroString += '%s// %s\n'%(attrDef, fi.desc);
-
-	destFile.write(macroString.encode('utf-8'));
-
-	for si in enums:
-		destFile.write(generateEnumDefine(si).encode('utf-8'));
-
-	destFile.write('}\n');
+	destFile.write(templ.safe_substitute(ppMarcoDefine=generateMacroDefine(enums, macros), ppMsgDefine=msgDefines).encode('utf-8'));
 
 	destFile.close();

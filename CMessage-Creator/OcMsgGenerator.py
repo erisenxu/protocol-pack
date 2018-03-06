@@ -197,6 +197,7 @@ class OcMsgGenerator(MsgGenerator):
 		destFile.write(templ.safe_substitute(ClassName=className, AttrSetGetDef=self.attrSetGetDef, Imports=self.includes,
 			Selector=self.selector).encode('utf-8'));
 		destFile.close();
+		return ''
 
 	#
 	# 生成实现文件
@@ -214,6 +215,7 @@ class OcMsgGenerator(MsgGenerator):
 			AttrSetGet=self.attrGetSetDefine, FieldEncode=self.fieldEncode, Formats=self.formats, ToXmls=self.toXmls,
 			GetSubField=self.getSubField, MsgMacro=marcroFile, Inits=self.inits).encode('utf-8'));
 		destFile.close();
+		return ''
 
 #
 # generate enum define
